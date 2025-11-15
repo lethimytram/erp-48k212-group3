@@ -18,100 +18,53 @@ Module quản lý toàn diện hệ thống đào tạo nội bộ cho nhân vi�
 - Đánh giá và cấp chứng chỉ
 - Khảo sát hài lòng
 
-## Tính năng đã triển khai
+## Tính năng
 
-### ✅ Tính năng 1: Quản lý khóa học, giảng viên và tài liệu (HOÀN THÀNH)
+### Tính năng 1: Quản lý khóa học, giảng viên và tài liệu
 
 **Người phụ trách**: Mỹ Trâm
 
-#### Models:
-
-1. **training.course** - Quản lý khóa học
-
-   - Thông tin cơ bản: tên, mã, mô tả, mục tiêu
-   - Phân loại: danh mục, cấp độ, loại hình
-   - Thời gian và địa điểm
-   - Giảng viên chính và phụ
-   - Quản lý tài liệu
-   - Cài đặt đánh giá và chứng chỉ
-   - Workflow: draft → published → in_progress → completed
-
-2. **training.course.category** - Danh mục khóa học
-
-   - Hỗ trợ phân cấp cha-con
-   - Quản lý theo cây thư mục
-
-3. **training.trainer** - Quản lý giảng viên
-
-   - Phân loại: nội bộ / bên ngoài
-   - Liên kết với hr.employee cho giảng viên nội bộ
-   - Quản lý chuyên môn, kỹ năng
-   - Theo dõi đánh giá và số khóa học
-   - Chi phí giảng dạy
-
-4. **training.material** - Tài liệu học tập
-   - Nhiều loại: document, video, presentation, exercise, test, link
-   - Upload file hoặc link URL
-   - Phân quyền: công khai / riêng tư
-   - Đánh dấu bắt buộc
-   - Thống kê lượt xem và tải
-
-#### Views:
-
-- Form view đầy đủ với các tab thông tin
-- Tree view với filter và sort
-- Kanban view hiển thị card đẹp
-- Search view với nhiều filter
-- Calendar view cho buổi học
-
-#### Security:
-
-- 3 nhóm quyền: Học viên, Giảng viên, Quản lý đào tạo
-- Record rules phân quyền chi tiết
-
-## Các tính năng đang triển khai (Skeleton đã tạo)
-
-### 🔄 Tính năng 2: Lập kế hoạch đào tạo (training.plan)
+### Tính năng 2: Lập kế hoạch đào tạo (training.plan)
 
 **Người phụ trách**: Kim Cương  
 **Deadline**: 12/11/2025
 
-### 🔄 Tính năng 3: Đăng ký và phê duyệt khóa học (training.enrollment)
+### Tính năng 3: Đăng ký và phê duyệt khóa học (training.enrollment)
 
 **Người phụ trách**: Thu Hà  
 **Deadline**: 15/11/2025
 
-### 🔄 Tính năng 4: Quản lý giảng viên và học viên (hr.employee)
+### Tính năng 4: Quản lý giảng viên và học viên (hr.employee)
 
 **Người phụ trách**: Tố Như  
 **Deadline**: 15/11/2025
 
-### 🔄 Tính năng 5: Tích hợp lịch đào tạo (training.session)
+### Tính năng 5: Tích hợp lịch đào tạo (training.session)
 
 **Người phụ trách**: Trọng Khang  
 **Deadline**: 25/11/2025
 
-### 🔄 Tính năng 6: Thông báo tự động qua email
+### Tính năng 6: Thông báo tự động qua email
 
 **Người phụ trách**: Mỹ Trâm  
 **Deadline**: 27/11/2025
 
-### 🔄 Tính năng 7: Dashboard tiến độ
+### Tính năng 7: Dashboard tiến độ
 
 **Người phụ trách**: Kim Cương  
 **Deadline**: 30/11/2025
 
-### 🔄 Tính năng 8-9: Quiz và bài kiểm tra (training.test)
+### Tính năng 8-9: Quiz và bài kiểm tra (training.test)
 
 **Người phụ trách**: Thu Hà & Tố Như  
 **Deadline**: 15/12/2025
 
-### 🔄 Tính năng 10-11: Cấp chứng chỉ (training.certificate)
+### Tính năng 10-11: Cấp chứng chỉ (training.certificate)
 
 **Người phụ trách**: Trọng Khang  
 **Deadline**: 25/12/2025
 
-### 🔄 Tính năng 12: Khảo sát hài lòng (training.feedback)
+### Tính năng 12: Khảo sát hài lòng (training.feedback)
 
 **Người phụ trách**: Mỹ Trâm  
 **Deadline**: 30/12/2025
