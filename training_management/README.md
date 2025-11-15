@@ -4,7 +4,7 @@
 
 - **Tên dự án**: Module Đào tạo nội bộ cho nhân viên
 - **Nhóm thực hiện**: Nhóm 3 (Mỹ Trâm, Kim Cương, Thu Hà, Tố Như, Trọng Khang)
-- **Thời gian**: Tháng 10/2025
+- **Thời gian**: 
 - **Người hướng dẫn**: Phạm Viết Phú
 
 ## Mô tả
