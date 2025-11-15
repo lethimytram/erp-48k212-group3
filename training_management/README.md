@@ -69,7 +69,7 @@ Module quản lý toàn diện hệ thống đào tạo nội bộ cho nhân vi�
 - 3 nhóm quyền: Học viên, Giảng viên, Quản lý đào tạo
 - Record rules phân quyền chi tiết
 
-## Các tính năng sẽ triển khai (Skeleton đã tạo)
+## Các tính năng đang triển khai (Skeleton đã tạo)
 
 ### 🔄 Tính năng 2: Lập kế hoạch đào tạo (training.plan)
 
