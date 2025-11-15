@@ -104,35 +104,35 @@ training_management/
 ├── __manifest__.py
 ├── models/
 │   ├── __init__.py
-│   ├── training_course.py          # ✅ Hoàn thành
-│   ├── training_trainer.py         # ✅ Hoàn thành
-│   ├── training_material.py        # ✅ Hoàn thành
-│   ├── training_plan.py            # 🔄 Skeleton
-│   ├── training_need.py            # 🔄 Skeleton
-│   ├── training_enrollment.py      # 🔄 Skeleton
-│   ├── training_session.py         # 🔄 Skeleton
-│   ├── training_test.py            # 🔄 Skeleton
-│   ├── training_certificate.py     # 🔄 Skeleton
-│   ├── training_feedback.py        # 🔄 Skeleton
-│   └── hr_employee.py              # 🔄 Skeleton
+│   ├── training_course.py          
+│   ├── training_trainer.py         
+│   ├── training_material.py        
+│   ├── training_plan.py            
+│   ├── training_need.py            
+│   ├── training_enrollment.py     
+│   ├── training_session.py         
+│   ├── training_test.py            
+│   ├── training_certificate.py     
+│   ├── training_feedback.py        
+│   └── hr_employee.py             
 ├── views/
-│   ├── training_course_views.xml   # ✅ Hoàn thành
-│   ├── training_trainer_views.xml  # ✅ Hoàn thành
-│   ├── training_material_views.xml # ✅ Hoàn thành
-│   ├── training_plan_views.xml     # 🔄 Basic
-│   ├── training_need_views.xml     # 🔄 Basic
-│   ├── training_enrollment_views.xml # 🔄 Basic
-│   ├── training_session_views.xml  # 🔄 Basic
-│   ├── training_test_views.xml     # 🔄 Basic
-│   ├── training_certificate_views.xml # 🔄 Basic
-│   ├── training_feedback_views.xml # 🔄 Basic
-│   └── training_menu_views.xml     # ✅ Hoàn thành
+│   ├── training_course_views.xml   
+│   ├── training_trainer_views.xml  
+│   ├── training_material_views.xml 
+│   ├── training_plan_views.xml    
+│   ├── training_need_views.xml     
+│   ├── training_enrollment_views.xml 
+│   ├── training_session_views.xml  
+│   ├── training_test_views.xml     
+│   ├── training_certificate_views.xml 
+│   ├── training_feedback_views.xml 
+│   └── training_menu_views.xml     
 ├── security/
-│   ├── training_security.xml       # ✅ Hoàn thành
-│   └── ir.model.access.csv         # ✅ Hoàn thành
+│   ├── training_security.xml       
+│   └── ir.model.access.csv         
 ├── data/
-│   └── training_data.xml           # ✅ Hoàn thành
-└── README.md                        # ✅ File này
+│   └── training_data.xml           
+└── README.md                     
 ```
 
 ## Hướng dẫn sử dụng
@@ -203,10 +203,6 @@ Nếu phát hiện lỗi hoặc có đề xuất cải tiến, vui lòng:
 1. Tạo issue trên repository
 2. Hoặc liên hệ nhóm phát triển
 
-## Giấy phép
-
-LGPL-3
-
 ## Tác giả
 
 Nhóm 3:
@@ -216,7 +212,3 @@ Nhóm 3:
 - Thu Hà
 - Tố Như
 - Trọng Khang
-
----
-
-**Lưu ý**: Module này đang trong quá trình phát triển. Tính năng 1 đã hoàn thiện, các tính năng còn lại đang được triển khai theo kế hoạch.
