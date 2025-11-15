@@ -2,7 +2,7 @@
 
 ## 1. Tạo thư mục `custom_addons`
 
-Trên máy local, tạo thư mục `custom_addons` để chứa mã nguồn các module Odoo trong project "odoo":
+Trên máy local, tạo thư mục `custom_addons` để chứa mã nguồn các module Odoo trong project `odoo`:
 
 ## 2. Copy code Odoo vào thư mục `custom_addons`
 
