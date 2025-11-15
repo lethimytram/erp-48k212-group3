@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Training Test Grading Wizard Views -->
+
+    <!-- Wizard Form View -->
+    <record id="view_training_test_grading_wizard_form" model="ir.ui.view">
+        <field name="name">training.test.grading.wizard.form</field>
+        <field name="model">training.test.grading.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Chấm bài tự luận">
+                <sheet>
+                    <group>
+                        <field name="result_id" invisible="1"/>
+                        <field name="test_id" readonly="1"/>
+                        <field name="employee_id" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="grading_line_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="answer_id" invisible="1"/>
+                                <field name="question" readonly="1"/>
+                                <field name="essay_answer" readonly="1"/>
+                                <field name="max_points" readonly="1"/>
+                                <field name="points_earned"/>
+                                <field name="teacher_comment"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group class="oe_subtotal_footer">
+                        <field name="total_points" readonly="1"/>
+                        <field name="points_earned" readonly="1"/>
+                        <field name="score_percentage" widget="percentage" readonly="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_submit_grade" string="Hoàn thành chấm bài" type="object" class="oe_highlight"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

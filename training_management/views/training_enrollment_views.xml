@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tính năng 3: Đăng ký và phê duyệt khóa học -->
+    <record id="view_training_enrollment_tree" model="ir.ui.view">
+        <field name="name">training.enrollment.tree</field>
+        <field name="model">training.enrollment</field>
+        <field name="arch" type="xml">
+            <list string="Đăng ký khóa học">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="course_id"/>
+                <field name="enrollment_date"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_training_enrollment_form" model="ir.ui.view">
+        <field name="name">training.enrollment.form</field>
+        <field name="model">training.enrollment</field>
+        <field name="arch" type="xml">
+            <form string="Đăng ký khóa học">
+                <header>
+                    <button name="action_submit_approval" string="Gửi phê duyệt" type="object" class="oe_highlight" invisible="approval_id or state != 'draft'"/>
+                    <button name="action_view_approval" string="Xem phê duyệt" type="object" class="oe_highlight" invisible="not approval_id"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_approval" type="object" class="oe_stat_button" icon="fa-check-square-o" invisible="not approval_id">
+                            <field name="approval_state" widget="label"/>
+                        </button>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="employee_id"/>
+                            <field name="course_id"/>
+                        </group>
+                        <group>
+                            <field name="enrollment_date"/>
+                            <field name="approval_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_training_enrollment" model="ir.actions.act_window">
+        <field name="name">Đăng ký khóa học</field>
+        <field name="res_model">training.enrollment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

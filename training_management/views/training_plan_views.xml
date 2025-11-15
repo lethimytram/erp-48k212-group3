@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Placeholder views cho Tính năng 2 - sẽ được bổ sung chi tiết sau -->
+    <record id="view_training_plan_tree" model="ir.ui.view">
+        <field name="name">training.plan.tree</field>
+        <field name="model">training.plan</field>
+        <field name="arch" type="xml">
+            <list string="Kế hoạch đào tạo">
+                <field name="name"/>
+                <field name="year"/>
+                <field name="department_id"/>
+                <field name="state"/>
+                <field name="responsible_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_training_plan_form" model="ir.ui.view">
+        <field name="name">training.plan.form</field>
+        <field name="model">training.plan</field>
+        <field name="arch" type="xml">
+            <form string="Kế hoạch đào tạo">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="year"/>
+                        <field name="department_id"/>
+                        <field name="responsible_id"/>
+                    </group>
+                    <field name="description" widget="html"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_training_plan" model="ir.actions.act_window">
+        <field name="name">Kế hoạch đào tạo</field>
+        <field name="res_model">training.plan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

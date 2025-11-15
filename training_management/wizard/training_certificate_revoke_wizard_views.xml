@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Training Certificate Revoke Wizard Views -->
+
+    <!-- Wizard Form View -->
+    <record id="view_training_certificate_revoke_wizard_form" model="ir.ui.view">
+        <field name="name">training.certificate.revoke.wizard.form</field>
+        <field name="model">training.certificate.revoke.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Thu hồi chứng chỉ">
+                <sheet>
+                    <group>
+                        <field name="certificate_id" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="revoke_reason" placeholder="Nhập lý do thu hồi chứng chỉ (tối thiểu 10 ký tự)..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_revoke" string="Thu hồi" type="object" class="oe_highlight"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

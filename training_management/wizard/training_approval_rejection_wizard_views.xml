@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Rejection Wizard Form View -->
+    <record id="view_training_approval_rejection_wizard_form" model="ir.ui.view">
+        <field name="name">training.approval.rejection.wizard.form</field>
+        <field name="model">training.approval.rejection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Từ chối phê duyệt">
+                <group>
+                    <field name="approval_line_id" invisible="1"/>
+                    <field name="rejection_reason" nolabel="1" placeholder="Vui lòng nhập lý do từ chối (tối thiểu 10 ký tự)..."/>
+                </group>
+                <footer>
+                    <button name="action_confirm_rejection" string="Xác nhận từ chối" type="object" class="btn-primary"/>
+                    <button string="Hủy" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

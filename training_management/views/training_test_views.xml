@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Training Test Views -->
+
+    <!-- Form View -->
+    <record id="view_training_test_form" model="ir.ui.view">
+        <field name="name">training.test.form</field>
+        <field name="model">training.test</field>
+        <field name="arch" type="xml">
+            <form string="Bài kiểm tra">
+                <header>
+                    <button name="action_publish" string="Công bố" type="object" invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_close" string="Đóng" type="object" invisible="state != 'published'"/>
+                    <button name="action_start_test" string="Làm bài" type="object" invisible="state != 'published'" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published,archived"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_results" type="object" class="oe_stat_button" icon="fa-list-alt">
+                            <field name="result_count" widget="statinfo" string="Lượt thi"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Tên bài kiểm tra..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="course_id" required="1"/>
+                            <field name="session_id" domain="[('course_id', '=', course_id)]"/>
+                            <field name="test_type"/>
+                            <field name="duration" widget="integer"/>
+                        </group>
+                        <group>
+                            <field name="passing_score"/>
+                            <field name="max_attempts"/>
+                            <field name="shuffle_questions"/>
+                            <field name="show_result_immediately"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Câu hỏi">
+                            <field name="question_ids">
+                                <list editable="bottom">
+                                    <field name="question_type"/>
+                                    <field name="question"/>
+                                    <field name="points"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="total_points" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Cấu hình">
+                            <group>
+                                <group string="Chứng chỉ">
+                                    <field name="auto_certificate"/>
+                                    <field name="certificate_template_id" invisible="not auto_certificate" required="auto_certificate"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Thống kê" invisible="not id">
+                            <group>
+                                <group string="Tổng quan">
+                                    <field name="result_count" readonly="1"/>
+                                    <field name="pass_rate" widget="percentage" readonly="1"/>
+                                    <field name="avg_score" widget="percentage" readonly="1"/>
+                                </group>
+                                <group string="Thời gian">
+                                    <field name="create_date" readonly="1"/>
+                                    <field name="write_date" readonly="1"/>
+                                    <field name="create_uid" readonly="1"/>
+                                    <field name="write_uid" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_training_test_list" model="ir.ui.view">
+        <field name="name">training.test.list</field>
+        <field name="model">training.test</field>
+        <field name="arch" type="xml">
+            <list string="Bài kiểm tra" multi_edit="1">
+                <field name="name"/>
+                <field name="course_id"/>
+                <field name="test_type"/>
+                <field name="question_count"/>
+                <field name="duration"/>
+                <field name="passing_score" widget="percentage"/>
+                <field name="result_count"/>
+                <field name="pass_rate" widget="percentage" optional="hide"/>
+                <field name="state" decoration-success="state == 'published'" decoration-muted="state == 'archived'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_training_test_search" model="ir.ui.view">
+        <field name="name">training.test.search</field>
+        <field name="model">training.test</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm bài kiểm tra">
+                <field name="name" string="Tên bài kiểm tra" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="course_id"/>
+                <field name="test_type"/>
+                <separator/>
+                <filter string="Nháp" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Đã công bố" name="filter_published" domain="[('state', '=', 'published')]"/>
+                <filter string="Đã lưu trữ" name="filter_archived" domain="[('state', '=', 'archived')]"/>
+                <separator/>
+                <filter string="Trắc nghiệm" name="filter_quiz" domain="[('test_type', '=', 'quiz')]"/>
+                <filter string="Tự luận" name="filter_essay" domain="[('test_type', '=', 'essay')]"/>
+                <filter string="Tổng hợp" name="filter_mixed" domain="[('test_type', '=', 'mixed')]"/>
+                <separator/>
+                <group expand="0" string="Nhóm theo">
+                    <filter string="Khóa học" name="group_course" context="{'group_by': 'course_id'}"/>
+                    <filter string="Loại" name="group_type" context="{'group_by': 'test_type'}"/>
+                    <filter string="Trạng thái" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Training Test Question Views -->
+
+    <!-- Question Form View -->
+    <record id="view_training_test_question_form" model="ir.ui.view">
+        <field name="name">training.test.question.form</field>
+        <field name="model">training.test.question</field>
+        <field name="arch" type="xml">
+            <form string="Câu hỏi">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="test_id" invisible="1"/>
+                            <field name="sequence"/>
+                            <field name="question_type"/>
+                            <field name="points"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="question" placeholder="Nhập nội dung câu hỏi..."/>
+                    </group>
+                    <group string="Đáp án" invisible="question_type == 'essay'">
+                        <field name="option_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="option_text"/>
+                                <field name="is_correct" invisible="context.get('question_type') == 'true_false'"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Giải thích" invisible="question_type == 'essay'">
+                        <field name="explanation" placeholder="Giải thích đáp án đúng..."/>
+                    </group>
+                    <!-- attachment fields removed because model does not define allow_attachment -->
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Question List View -->
+    <record id="view_training_test_question_list" model="ir.ui.view">
+        <field name="name">training.test.question.list</field>
+        <field name="model">training.test.question</field>
+        <field name="arch" type="xml">
+            <list string="Câu hỏi">
+                <field name="question"/>
+                <field name="question_type"/>
+                <field name="points"/>
+                <field name="test_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Training Test Result Views -->
+
+    <!-- Result Form View -->
+    <record id="view_training_test_result_form" model="ir.ui.view">
+        <field name="name">training.test.result.form</field>
+        <field name="model">training.test.result</field>
+        <field name="arch" type="xml">
+            <form string="Kết quả thi" create="false">
+                <header>
+                    <button name="action_submit" string="Nộp bài" type="object" invisible="state != 'in_progress'" class="oe_highlight"/>
+                    <button name="action_auto_grade" string="Chấm tự động" type="object" invisible="state != 'submitted'" class="oe_highlight" groups="training_management.group_training_manager"/>
+                    <button name="action_manual_grade" string="Chấm thủ công" type="object" invisible="state != 'submitted'" groups="training_management.group_training_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="in_progress,submitted,graded"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_certificate" type="object" class="oe_stat_button" icon="fa-certificate" invisible="not certificate_id">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Chứng chỉ</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="test_id" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="enrollment_id" readonly="1"/>
+                            <field name="employee_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="start_time" readonly="1"/>
+                            <field name="end_time" readonly="1"/>
+                            <field name="duration_minutes" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Điểm số">
+                            <field name="total_points" readonly="1"/>
+                            <field name="points_earned"/>
+                            <field name="score" widget="percentage"/>
+                            <field name="passed" readonly="1"/>
+                        </group>
+                        <group string="Chứng chỉ">
+                            <field name="certificate_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Bài làm">
+                            <field name="answer_ids">
+                                <list create="false" delete="false">
+                                    <field name="question_id"/>
+                                    <field name="selected_option_ids" widget="many2many_tags"/>
+                                    <field name="essay_answer"/>
+                                    <field name="points_earned"/>
+                                    <field name="is_correct" decoration-success="is_correct == True" decoration-danger="is_correct == False"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Nhận xét" invisible="state == 'in_progress'">
+                            <field name="teacher_notes" placeholder="Nhận xét của giáo viên..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Result List View -->
+    <record id="view_training_test_result_list" model="ir.ui.view">
+        <field name="name">training.test.result.list</field>
+        <field name="model">training.test.result</field>
+        <field name="arch" type="xml">
+            <list string="Kết quả thi">
+                <field name="test_id"/>
+                <field name="employee_id"/>
+                <field name="start_time"/>
+                <field name="score" widget="percentage"/>
+                <field name="passed" decoration-success="passed == True" decoration-danger="passed == False"/>
+                <field name="state" decoration-info="state == 'in_progress'" decoration-warning="state == 'submitted'" decoration-success="state == 'graded'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Result Search View -->
+    <record id="view_training_test_result_search" model="ir.ui.view">
+        <field name="name">training.test.result.search</field>
+        <field name="model">training.test.result</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm kết quả thi">
+                <field name="test_id"/>
+                <field name="employee_id"/>
+                <separator/>
+                <filter string="Đang làm" name="filter_in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Đã nộp" name="filter_submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter string="Đã chấm" name="filter_graded" domain="[('state', '=', 'graded')]"/>
+                <separator/>
+                <filter string="Đạt" name="filter_passed" domain="[('passed', '=', True)]"/>
+                <filter string="Không đạt" name="filter_failed" domain="[('passed', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Nhóm theo">
+                    <filter string="Bài kiểm tra" name="group_test" context="{'group_by': 'test_id'}"/>
+                    <filter string="Nhân viên" name="group_employee" context="{'group_by': 'employee_id'}"/>
+                    <filter string="Trạng thái" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+
+    <!-- Training Test Action -->
+    <record id="action_training_test" model="ir.actions.act_window">
+        <field name="name">Bài kiểm tra</field>
+        <field name="res_model">training.test</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo bài kiểm tra mới
+            </p>
+            <p>
+                Tạo bài kiểm tra với các câu hỏi trắc nghiệm hoặc tự luận để đánh giá kiến thức học viên.
+            </p>
+        </field>
+    </record>
+
+    <!-- Training Test Result Action -->
+    <record id="action_training_test_result" model="ir.actions.act_window">
+        <field name="name">Kết quả thi</field>
+        <field name="res_model">training.test.result</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_submitted': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có kết quả thi nào
+            </p>
+            <p>
+                Kết quả thi sẽ được tạo tự động khi học viên làm bài kiểm tra.
+            </p>
+        </field>
+    </record>
+
+</odoo>

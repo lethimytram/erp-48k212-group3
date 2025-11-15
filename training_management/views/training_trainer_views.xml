@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_training_trainer_tree" model="ir.ui.view">
+        <field name="name">training.trainer.tree</field>
+        <field name="model">training.trainer</field>
+        <field name="arch" type="xml">
+            <list string="Giảng viên">
+                <field name="name"/>
+                <field name="trainer_type" widget="badge" decoration-success="trainer_type=='internal'" decoration-info="trainer_type=='external'"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="specialization"/>
+                <field name="experience_years"/>
+                <field name="course_count"/>
+                <field name="rating" widget="progressbar"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_training_trainer_form" model="ir.ui.view">
+        <field name="name">training.trainer.form</field>
+        <field name="model">training.trainer</field>
+        <field name="arch" type="xml">
+            <form string="Giảng viên">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_courses" type="object" class="oe_stat_button" icon="fa-graduation-cap">
+                            <field name="course_count" widget="statbutton" string="Khóa học"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Lưu trữ" bg_color="bg-danger" invisible="active"/>
+                    <field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image', 'size': [90, 90]}"/>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Tên giảng viên"/>
+                        </h1>
+                        <h3>
+                            <field name="specialization" placeholder="Chuyên môn"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="trainer_type"/>
+                            <field name="employee_id" invisible="trainer_type == 'external'"/>
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="experience_years"/>
+                            <field name="rating" widget="percentpie"/>
+                            <field name="hourly_rate" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="availability"/>
+                        </group>
+                    </group>
+                    <group string="Thông tin bên ngoài" invisible="trainer_type == 'internal'">
+                        <field name="company_name"/>
+                        <field name="partner_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Tiểu sử">
+                            <field name="bio" widget="html" placeholder="Thông tin chi tiết về giảng viên..."/>
+                        </page>
+                        <page string="Bằng cấp &amp; Chứng chỉ">
+                            <field name="qualification" placeholder="Các bằng cấp và chứng chỉ của giảng viên..."/>
+                        </page>
+                        <page string="Kỹ năng">
+                            <field name="skill_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </page>
+                        <page string="Khóa học">
+                            <group>
+                                <field name="main_course_ids" string="Khóa học chính" nolabel="1">
+                                    <list>
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                        <field name="category_id"/>
+                                        <field name="duration"/>
+                                        <field name="state"/>
+                                    </list>
+                                </field>
+                            </group>
+                            <group>
+                                <field name="course_ids" string="Khóa học hỗ trợ" nolabel="1" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                        <page string="Ghi chú">
+                            <field name="notes" placeholder="Ghi chú thêm..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_training_trainer_kanban" model="ir.ui.view">
+        <field name="name">training.trainer.kanban</field>
+        <field name="model">training.trainer</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="id"/>
+                <field name="name"/>
+                <field name="image"/>
+                <field name="trainer_type"/>
+                <field name="specialization"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="course_count"/>
+                <field name="rating"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="o_kanban_image_fill_left" t-attf-style="background-image:url('#{kanban_image('training.trainer', 'image', record.id.raw_value)}')"/>
+                            <div class="oe_kanban_details">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <br/>
+                                        <span class="text-muted">
+                                            <field name="specialization"/>
+                                        </span>
+                                    </div>
+                                    <span class="badge badge-pill" t-att-class="{'badge-success': record.trainer_type.raw_value == 'internal', 'badge-info': record.trainer_type.raw_value == 'external'}">
+                                        <field name="trainer_type"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <i class="fa fa-envelope" title="Email"/>
+                                    <field name="email"/>
+                                    <br/>
+                                    <i class="fa fa-phone" title="Điện thoại"/>
+                                    <field name="phone"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="badge badge-info">
+                                            <i class="fa fa-graduation-cap" title="Số khóa học"/>
+                                            <field name="course_count"/>
+ khóa
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="rating" widget="float" options="{'precision': 1}"/>
+★
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_training_trainer_search" model="ir.ui.view">
+        <field name="name">training.trainer.search</field>
+        <field name="model">training.trainer</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm giảng viên">
+                <field name="name" string="Giảng viên" filter_domain="['|', ('name', 'ilike', self), ('specialization', 'ilike', self)]"/>
+                <field name="email"/>
+                <field name="specialization"/>
+                <separator/>
+                <filter string="Nội bộ" name="internal" domain="[('trainer_type', '=', 'internal')]"/>
+                <filter string="Bên ngoài" name="external" domain="[('trainer_type', '=', 'external')]"/>
+                <separator/>
+                <filter string="Hoạt động" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Lưu trữ" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Nhóm theo">
+                    <filter string="Loại giảng viên" name="group_type" context="{'group_by': 'trainer_type'}"/>
+                    <filter string="Chuyên môn" name="group_specialization" context="{'group_by': 'specialization'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_training_trainer" model="ir.actions.act_window">
+        <field name="name">Giảng viên</field>
+        <field name="res_model">training.trainer</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Thêm giảng viên mới
+            </p>
+            <p>
+                Quản lý danh sách giảng viên nội bộ và bên ngoài.
+            </p>
+        </field>
+    </record>
+
+</odoo>

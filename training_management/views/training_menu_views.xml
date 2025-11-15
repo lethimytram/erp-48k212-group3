@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main Menu -->
+    <menuitem id="menu_training_management_root" name="Đào tạo" sequence="50" groups="training_management.group_training_trainee,training_management.group_training_trainer,training_management.group_training_manager" web_icon="training_management,static/description/icon.png"/>
+
+    <!-- Khóa học -->
+    <menuitem id="menu_training_course_main" name="Khóa học" parent="menu_training_management_root" sequence="10"/>
+
+    <menuitem id="menu_training_course" name="Khóa học" parent="menu_training_course_main" action="action_training_course" sequence="10"/>
+
+    <menuitem id="menu_training_course_category" name="Danh mục khóa học" parent="menu_training_course_main" action="action_training_course_category" sequence="20"/>
+
+    <menuitem id="menu_training_trainer" name="Giảng viên" parent="menu_training_course_main" action="action_training_trainer" sequence="30"/>
+
+    <menuitem id="menu_training_material" name="Tài liệu" parent="menu_training_course_main" action="action_training_material" sequence="40"/>
+
+    <!-- Quản lý học viên -->
+    <menuitem id="menu_training_student_main" name="Học viên" parent="menu_training_management_root" sequence="20"/>
+
+    <menuitem id="menu_training_enrollment" name="Đăng ký khóa học" parent="menu_training_student_main" action="action_training_enrollment" sequence="10"/>
+
+    <menuitem id="menu_training_session" name="Lịch học" parent="menu_training_student_main" action="action_training_session" sequence="20"/>
+
+    <menuitem id="menu_training_certificate" name="Chứng chỉ" parent="menu_training_student_main" action="action_training_certificate" sequence="30"/>
+
+    <!-- Đánh giá -->
+    <menuitem id="menu_training_evaluation_main" name="Đánh giá" parent="menu_training_management_root" sequence="30"/>
+
+    <menuitem id="menu_training_test" name="Bài kiểm tra" parent="menu_training_evaluation_main" action="action_training_test" sequence="10"/>
+
+    <menuitem id="menu_training_test_result" name="Kết quả thi" parent="menu_training_evaluation_main" action="action_training_test_result" sequence="11"/>
+
+    <menuitem id="menu_training_feedback" name="Khảo sát hài lòng" parent="menu_training_evaluation_main" action="action_training_feedback" sequence="20"/>
+
+    <!-- Kế hoạch -->
+    <menuitem id="menu_training_planning_main" name="Kế hoạch" parent="menu_training_management_root" sequence="40"/>
+
+    <menuitem id="menu_training_plan" name="Kế hoạch đào tạo" parent="menu_training_planning_main" action="action_training_plan" sequence="10"/>
+
+    <menuitem id="menu_training_need" name="Nhu cầu đào tạo" parent="menu_training_planning_main" action="action_training_need" sequence="20"/>
+
+    <!-- Nhắc nhở -->
+    <menuitem id="menu_training_reminder_main" name="Nhắc nhở" parent="menu_training_management_root" sequence="50"/>
+
+    <menuitem id="menu_training_reminder" name="Nhắc nhở" parent="menu_training_reminder_main" action="action_training_reminder" sequence="10"/>
+
+    <menuitem id="menu_training_reminder_template" name="Mẫu nhắc nhở" parent="menu_training_reminder_main" action="action_training_reminder_template" sequence="20" groups="group_training_manager"/>
+
+    <!-- Phê duyệt -->
+    <menuitem id="menu_training_approval_main" name="Phê duyệt" parent="menu_training_management_root" sequence="60"/>
+
+    <menuitem id="menu_training_approval" name="Yêu cầu phê duyệt" parent="menu_training_approval_main" action="action_training_approval" sequence="10"/>
+
+    <menuitem id="menu_my_training_approvals" name="Phê duyệt của tôi" parent="menu_training_approval_main" action="action_my_training_approvals" sequence="20"/>
+
+    <menuitem id="menu_training_approval_config" name="Cấu hình phê duyệt" parent="menu_training_approval_main" action="action_training_approval_config" sequence="30" groups="group_training_manager"/>
+
+    <!-- Cấu hình -->
+    <menuitem id="menu_training_config_main" name="Cấu hình" parent="menu_training_management_root" sequence="100" groups="group_training_manager"/>
+
+    <menuitem id="menu_training_certificate_template" name="Mẫu chứng chỉ" parent="menu_training_config_main" action="action_training_certificate_template" sequence="10"/>
+
+</odoo>

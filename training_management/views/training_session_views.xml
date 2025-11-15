@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tính năng 5: Lịch đào tạo -->
+    <record id="view_training_session_tree" model="ir.ui.view">
+        <field name="name">training.session.tree</field>
+        <field name="model">training.session</field>
+        <field name="arch" type="xml">
+            <list string="Buổi học">
+                <field name="name"/>
+                <field name="course_id"/>
+                <field name="trainer_id"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="location"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_training_session_form" model="ir.ui.view">
+        <field name="name">training.session.form</field>
+        <field name="model">training.session</field>
+        <field name="arch" type="xml">
+            <form string="Buổi học">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_reminders" type="object" class="oe_stat_button" icon="fa-bell">
+                            <field name="reminder_count" widget="statinfo" string="Nhắc nhở"/>
+                        </button>
+                        <button name="action_create_reminder" type="object" class="oe_stat_button" icon="fa-plus-circle" string="Tạo nhắc nhở"/>
+                    </div>
+                    <group>
+                        <field name="name"/>
+                        <field name="course_id"/>
+                        <field name="trainer_id"/>
+                        <field name="auto_create_reminder"/>
+                    </group>
+                    <group>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                        <field name="location"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_training_session_calendar" model="ir.ui.view">
+        <field name="name">training.session.calendar</field>
+        <field name="model">training.session</field>
+        <field name="arch" type="xml">
+            <calendar string="Lịch buổi học" date_start="start_date" date_stop="end_date" color="course_id">
+                <field name="name"/>
+                <field name="course_id"/>
+                <field name="trainer_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_training_session" model="ir.actions.act_window">
+        <field name="name">Buổi học</field>
+        <field name="res_model">training.session</field>
+        <field name="view_mode">calendar,list,form</field>
+    </record>
+</odoo>

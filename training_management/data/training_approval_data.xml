@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default Approval Configurations -->
+    <record id="approval_config_standard" model="training.approval.config">
+        <field name="name">Phê duyệt tiêu chuẩn</field>
+        <field name="sequence">10</field>
+        <field name="min_duration">0</field>
+        <field name="max_duration">40</field>
+        <field name="min_cost">0</field>
+        <field name="max_cost">5000000</field>
+    </record>
+
+    <record id="approval_step_manager" model="training.approval.step">
+        <field name="name">Quản lý trực tiếp</field>
+        <field name="sequence">10</field>
+        <field name="config_id" ref="approval_config_standard"/>
+        <field name="approver_type">manager</field>
+    </record>
+
+    <record id="approval_step_hr" model="training.approval.step">
+        <field name="name">HR Manager</field>
+        <field name="sequence">20</field>
+        <field name="config_id" ref="approval_config_standard"/>
+        <field name="approver_type">hr_manager</field>
+    </record>
+
+    <!-- High Value Training Approval Config -->
+    <record id="approval_config_high_value" model="training.approval.config">
+        <field name="name">Phê duyệt khóa học cao cấp</field>
+        <field name="sequence">5</field>
+        <field name="min_cost">5000000</field>
+    </record>
+
+    <record id="approval_step_hv_manager" model="training.approval.step">
+        <field name="name">Quản lý trực tiếp</field>
+        <field name="sequence">10</field>
+        <field name="config_id" ref="approval_config_high_value"/>
+        <field name="approver_type">manager</field>
+    </record>
+
+    <record id="approval_step_hv_hr" model="training.approval.step">
+        <field name="name">HR Manager</field>
+        <field name="sequence">20</field>
+        <field name="config_id" ref="approval_config_high_value"/>
+        <field name="approver_type">hr_manager</field>
+    </record>
+
+    <record id="approval_step_hv_director" model="training.approval.step">
+        <field name="name">Giám đốc</field>
+        <field name="sequence">30</field>
+        <field name="config_id" ref="approval_config_high_value"/>
+        <field name="approver_type">director</field>
+    </record>
+
+    <!-- Email Template: Approval Request -->
+    <record id="email_template_approval_request" model="mail.template">
+        <field name="name">Training: Approval Request</field>
+        <field name="model_id" ref="model_training_approval_line"/>
+        <field name="subject">Yêu cầu phê duyệt đào tạo: ${object.approval_id.course_id.name}</field>
+        <field name="email_to">${object.approver_id.email}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+                <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="color: #875A7B; margin: 0;">🔔 YÊU CẦU PHÊ DUYỆT ĐÀO TẠO</h2>
+                    </div>
+
+                    <p>Xin chào <strong>${object.approver_id.name}</strong>,
+                    </p>
+
+                    <p>Bạn có một yêu cầu phê duyệt đào tạo mới cần xử lý:</p>
+
+                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; width: 40%;">
+                                    <strong>Nhân viên:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${object.approval_id.employee_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0;">
+                                    <strong>Khóa học:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${object.approval_id.course_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0;">
+                                    <strong>Bước phê duyệt:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${object.step_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0;">
+                                    <strong>Ngày yêu cầu:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${format_datetime(object.approval_id.request_date, dt_format='dd/MM/yyyy HH:mm')}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${object.get_base_url()}/web#id=${object.approval_id.id}&amp;model=training.approval&amp;view_type=form" style="display: inline-block; padding: 12px 30px; background-color: #875A7B; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            Xem chi tiết và phê duyệt
+                        </a>
+                    </div>
+
+                    <p style="color: #666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                        Email này được gửi tự động từ hệ thống quản lý đào tạo. Vui lòng không trả lời email này.
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <!-- Email Template: Approval Approved -->
+    <record id="email_template_approval_approved" model="mail.template">
+        <field name="name">Training: Approval Approved</field>
+        <field name="model_id" ref="model_training_approval"/>
+        <field name="subject">✅ Yêu cầu đào tạo đã được phê duyệt: ${object.course_id.name}</field>
+        <field name="email_to">${object.employee_id.work_email}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+                <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="color: #28a745; margin: 0;">✅ PHÊ DUYỆT THÀNH CÔNG</h2>
+                    </div>
+
+                    <p>Xin chào <strong>${object.employee_id.name}</strong>,
+                    </p>
+
+                    <p>Chúc mừng! Yêu cầu đào tạo của bạn đã được phê duyệt.</p>
+
+                    <div style="background-color: #d4edda; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #28a745;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; width: 40%;">
+                                    <strong>Khóa học:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${object.course_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0;">
+                                    <strong>Ngày phê duyệt:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${format_datetime(object.approval_date, dt_format='dd/MM/yyyy HH:mm')}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <p>Vui lòng theo dõi lịch học và chuẩn bị tham gia khóa đào tạo.</p>
+
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${object.get_base_url()}/web#id=${object.enrollment_id.id}&amp;model=training.enrollment&amp;view_type=form" style="display: inline-block; padding: 12px 30px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            Xem thông tin đăng ký
+                        </a>
+                    </div>
+
+                    <p style="color: #666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                        Email này được gửi tự động từ hệ thống quản lý đào tạo. Vui lòng không trả lời email này.
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <!-- Email Template: Approval Rejected -->
+    <record id="email_template_approval_rejected" model="mail.template">
+        <field name="name">Training: Approval Rejected</field>
+        <field name="model_id" ref="model_training_approval"/>
+        <field name="subject">❌ Yêu cầu đào tạo bị từ chối: ${object.course_id.name}</field>
+        <field name="email_to">${object.employee_id.work_email}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+                <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="color: #dc3545; margin: 0;">❌ YÊU CẦU BỊ TỪ CHỐI</h2>
+                    </div>
+
+                    <p>Xin chào <strong>${object.employee_id.name}</strong>,
+                    </p>
+
+                    <p>Rất tiếc, yêu cầu đào tạo của bạn đã bị từ chối.</p>
+
+                    <div style="background-color: #f8d7da; padding: 20px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; width: 40%;">
+                                    <strong>Khóa học:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${object.course_id.name}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0;">
+                                    <strong>Ngày từ chối:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${format_datetime(object.rejection_date, dt_format='dd/MM/yyyy HH:mm')}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; vertical-align: top;">
+                                    <strong>Lý do:</strong>
+                                </td>
+                                <td style="padding: 8px 0;">${object.rejection_reason or 'Không có lý do cụ thể'}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <p>Vui lòng liên hệ với người phê duyệt để biết thêm chi tiết hoặc thử đăng ký khóa học khác phù hợp hơn.</p>
+
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${object.get_base_url()}/web#id=${object.id}&amp;model=training.approval&amp;view_type=form" style="display: inline-block; padding: 12px 30px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                            Xem chi tiết
+                        </a>
+                    </div>
+
+                    <p style="color: #666; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                        Email này được gửi tự động từ hệ thống quản lý đào tạo. Vui lòng không trả lời email này.
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+</odoo>

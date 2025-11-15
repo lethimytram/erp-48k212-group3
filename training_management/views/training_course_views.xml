@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_training_course_tree" model="ir.ui.view">
+        <field name="name">training.course.tree</field>
+        <field name="model">training.course</field>
+        <field name="arch" type="xml">
+            <list string="Khóa học" create="1" decoration-success="state=='published'" decoration-info="state=='in_progress'" decoration-muted="state=='cancelled'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="level"/>
+                <field name="type"/>
+                <field name="duration"/>
+                <field name="main_trainer_id"/>
+                <field name="enrollment_count"/>
+                <field name="state" widget="badge" decoration-success="state=='published'" decoration-info="state=='in_progress'" decoration-warning="state=='draft'"/>
+                <field name="responsible_id" widget="many2one_avatar_user"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_training_course_form" model="ir.ui.view">
+        <field name="name">training.course.form</field>
+        <field name="model">training.course</field>
+        <field name="arch" type="xml">
+            <form string="Khóa học">
+                <header>
+                    <button name="action_publish" string="Công bố" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_start" string="Bắt đầu" type="object" class="oe_highlight" invisible="state != 'published'"/>
+                    <button name="action_complete" string="Hoàn thành" type="object" class="oe_highlight" invisible="state != 'in_progress'"/>
+                    <button name="action_cancel" string="Hủy bỏ" type="object" invisible="state not in ['draft', 'published', 'in_progress']"/>
+                    <button name="action_reset_to_draft" string="Đưa về nháp" type="object" invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_materials" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="material_count" widget="statbutton" string="Tài liệu"/>
+                        </button>
+                        <button name="action_view_enrollments" type="object" class="oe_stat_button" icon="fa-users">
+                            <field name="enrollment_count" widget="statbutton" string="Đăng ký"/>
+                        </button>
+                        <button name="action_view_sessions" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <field name="session_count" widget="statbutton" string="Buổi học"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Đã hủy" bg_color="bg-danger" invisible="state != 'cancelled'"/>
+                    <widget name="web_ribbon" title="Hoàn thành" bg_color="bg-success" invisible="state != 'completed'"/>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Tên khóa học"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category_id"/>
+                            <field name="level"/>
+                            <field name="type"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="duration"/>
+                            <field name="duration_days"/>
+                            <field name="location"/>
+                            <field name="cost" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="responsible_id" widget="many2one_avatar_user"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Thông tin chung">
+                            <group>
+                                <group string="Mô tả">
+                                    <field name="description" nolabel="1" widget="html"/>
+                                </group>
+                                <group string="Mục tiêu">
+                                    <field name="objectives" nolabel="1" placeholder="Mục tiêu học viên đạt được sau khóa học..."/>
+                                </group>
+                                <group string="Điều kiện tiên quyết">
+                                    <field name="prerequisites" nolabel="1" placeholder="Kiến thức hoặc kỹ năng cần có trước khi tham gia..."/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Giảng viên">
+                            <group>
+                                <field name="main_trainer_id"/>
+                            </group>
+                            <field name="trainer_ids" widget="many2many_tags" options="{'color_field': 'id'}"/>
+                        </page>
+                        <page string="Tài liệu" name="materials">
+                            <field name="material_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="material_type"/>
+                                    <field name="required_reading" widget="boolean_toggle"/>
+                                    <field name="attachment_count"/>
+                                    <field name="url" widget="url"/>
+                                    <button name="action_view" string="Xem" type="object" icon="fa-eye"/>
+                                    <button name="action_download" string="Tải" type="object" icon="fa-download"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Học viên">
+                            <group>
+                                <group>
+                                    <field name="max_participants"/>
+                                    <field name="min_participants"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Đánh giá &amp; Chứng chỉ">
+                            <group>
+                                <group>
+                                    <field name="has_test" widget="boolean_toggle"/>
+                                    <field name="passing_score" invisible="not has_test"/>
+                                </group>
+                                <group>
+                                    <field name="issue_certificate" widget="boolean_toggle"/>
+                                    <field name="certificate_template_id" invisible="not issue_certificate"/>
+                                </group>
+                            </group>
+                            <group string="Kỹ năng đạt được">
+                                <field name="skill_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            </group>
+                        </page>
+                        <page string="Ghi chú">
+                            <field name="notes" placeholder="Ghi chú thêm về khóa học..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_training_course_kanban" model="ir.ui.view">
+        <field name="name">training.course.kanban</field>
+        <field name="model">training.course</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_id"/>
+                <field name="level"/>
+                <field name="type"/>
+                <field name="duration"/>
+                <field name="main_trainer_id"/>
+                <field name="enrollment_count"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <br/>
+                                    <span class="text-muted">
+                                        <field name="code"/>
+                                    </span>
+                                </div>
+                                <span class="float-right badge badge-pill" t-att-class="{'badge-success': record.state.raw_value == 'published', 'badge-info': record.state.raw_value == 'in_progress', 'badge-warning': record.state.raw_value == 'draft'}">
+                                    <field name="state"/>
+                                </span>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <field name="category_id"/>
+                                <br/>
+                                <i class="fa fa-clock-o" title="Thời lượng"/>
+                                <field name="duration"/>
+ giờ
+                                <br/>
+                                <i class="fa fa-user" title="Giảng viên"/>
+                                <field name="main_trainer_id"/>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <span class="badge badge-info">
+                                        <i class="fa fa-users" title="Số lượng đăng ký"/>
+                                        <field name="enrollment_count"/>
+ đăng ký
+                                    </span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="level" widget="label_selection"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_training_course_search" model="ir.ui.view">
+        <field name="name">training.course.search</field>
+        <field name="model">training.course</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm khóa học">
+                <field name="name" string="Khóa học" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <field name="category_id"/>
+                <field name="main_trainer_id"/>
+                <field name="responsible_id"/>
+                <filter string="Khóa của tôi" name="my_courses" domain="[('responsible_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Nháp" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Đã công bố" name="published" domain="[('state', '=', 'published')]"/>
+                <filter string="Đang diễn ra" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Hoàn thành" name="completed" domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <filter string="Cơ bản" name="beginner" domain="[('level', '=', 'beginner')]"/>
+                <filter string="Trung cấp" name="intermediate" domain="[('level', '=', 'intermediate')]"/>
+                <filter string="Nâng cao" name="advanced" domain="[('level', '=', 'advanced')]"/>
+                <separator/>
+                <filter string="Nội bộ" name="internal" domain="[('type', '=', 'internal')]"/>
+                <filter string="Bên ngoài" name="external" domain="[('type', '=', 'external')]"/>
+                <filter string="Trực tuyến" name="online" domain="[('type', '=', 'online')]"/>
+                <separator/>
+                <filter string="Hoạt động" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Lưu trữ" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Nhóm theo">
+                    <filter string="Danh mục" name="group_category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Cấp độ" name="group_level" context="{'group_by': 'level'}"/>
+                    <filter string="Loại hình" name="group_type" context="{'group_by': 'type'}"/>
+                    <filter string="Trạng thái" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Người phụ trách" name="group_responsible" context="{'group_by': 'responsible_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_training_course" model="ir.actions.act_window">
+        <field name="name">Khóa học</field>
+        <field name="res_model">training.course</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo khóa học đào tạo đầu tiên
+            </p>
+            <p>
+                Quản lý các khóa học đào tạo nội bộ cho nhân viên.
+            </p>
+        </field>
+    </record>
+
+    <!-- Category Tree View -->
+    <record id="view_training_course_category_tree" model="ir.ui.view">
+        <field name="name">training.course.category.tree</field>
+        <field name="model">training.course.category</field>
+        <field name="arch" type="xml">
+            <list string="Danh mục khóa học" create="1">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="parent_id"/>
+                <field name="course_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Category Form View -->
+    <record id="view_training_course_category_form" model="ir.ui.view">
+        <field name="name">training.course.category.form</field>
+        <field name="model">training.course.category</field>
+        <field name="arch" type="xml">
+            <form string="Danh mục khóa học">
+                <sheet>
+                    <widget name="web_ribbon" title="Lưu trữ" bg_color="bg-danger" invisible="active"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="parent_id"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="course_count"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Mô tả danh mục..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Category Action -->
+    <record id="action_training_course_category" model="ir.actions.act_window">
+        <field name="name">Danh mục khóa học</field>
+        <field name="res_model">training.course.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

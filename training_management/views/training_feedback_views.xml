@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tính năng 12: Khảo sát hài lòng -->
+    <record id="view_training_feedback_tree" model="ir.ui.view">
+        <field name="name">training.feedback.tree</field>
+        <field name="model">training.feedback</field>
+        <field name="arch" type="xml">
+            <list string="Khảo sát hài lòng">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="course_id"/>
+                <field name="overall_rating"/>
+                <field name="feedback_date"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_training_feedback_form" model="ir.ui.view">
+        <field name="name">training.feedback.form</field>
+        <field name="model">training.feedback</field>
+        <field name="arch" type="xml">
+            <form string="Khảo sát hài lòng">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="course_id"/>
+                        <field name="trainer_id"/>
+                        <field name="feedback_date"/>
+                    </group>
+                    <group string="Đánh giá">
+                        <field name="overall_rating"/>
+                        <field name="content_rating" widget="priority"/>
+                        <field name="trainer_rating" widget="priority"/>
+                        <field name="material_rating" widget="priority"/>
+                        <field name="organization_rating" widget="priority"/>
+                    </group>
+                    <group string="Nhận xét">
+                        <field name="comments" nolabel="1" placeholder="Nhận xét của bạn..."/>
+                    </group>
+                    <group string="Đề xuất">
+                        <field name="suggestions" nolabel="1" placeholder="Đề xuất cải tiến..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_training_feedback" model="ir.actions.act_window">
+        <field name="name">Khảo sát hài lòng</field>
+        <field name="res_model">training.feedback</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
