@@ -111,7 +111,6 @@
         <field name="name">Nhắc nhở buổi học (1 ngày trước)</field>
         <field name="reminder_type">session</field>
         <field name="days_before">1</field>
-        <field name="subject">Nhắc nhở: Buổi học {session_name} diễn ra vào ngày mai</field>
         <field name="message_template" type="html">
             <div>
                 <p>Kính gửi Anh/Chị,</p>
@@ -129,7 +128,6 @@
                 <p>Trân trọng,</p>
             </div>
         </field>
-        <field name="send_email" eval="True"/>
         <field name="send_notification" eval="True"/>
         <field name="active" eval="True"/>
     </record>
@@ -138,7 +136,6 @@
         <field name="name">Nhắc nhở buổi học (1 tuần trước)</field>
         <field name="reminder_type">session</field>
         <field name="days_before">7</field>
-        <field name="subject">Nhắc nhở: Buổi học {session_name} diễn ra trong tuần tới</field>
         <field name="message_template" type="html">
             <div>
                 <p>Kính gửi Anh/Chị,</p>
@@ -156,7 +153,6 @@
                 <p>Trân trọng,</p>
             </div>
         </field>
-        <field name="send_email" eval="True"/>
         <field name="send_notification" eval="False"/>
         <field name="active" eval="True"/>
     </record>

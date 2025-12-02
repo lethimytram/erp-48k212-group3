@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_training_approval_rejection_wizard_form" model="ir.ui.view">
+        <field name="name">training.approval.rejection.wizard.form</field>
+        <field name="model">training.approval.rejection.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Xác nhận Từ chối">
+                <sheet>
+                    <div class="alert alert-warning" role="alert" style="margin-bottom: 20px;">
+                        <i class="fa fa-exclamation-triangle"/>
+                        <strong> Lưu ý:</strong> Việc từ chối sẽ dừng quy trình hiện tại và gửi thông báo lại cho người yêu cầu.
+                    </div>
+
+                    <group>
+                        <field name="approval_line_id" invisible="1"/>
+                        <field name="rejection_reason" placeholder="Vui lòng nhập lý do cụ thể (VD: Thiếu thông tin, sai quy trình...)..."/>
+                    </group>
+                </sheet>
+
+                <footer>
+                    <button name="action_confirm_rejection" string="Xác nhận Từ chối" type="object" class="btn-danger" data-hotkey="q"/>
+                    <button string="Hủy bỏ" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_training_approval_rejection_wizard" model="ir.actions.act_window">
+        <field name="name">Từ chối phê duyệt</field>
+        <field name="res_model">training.approval.rejection.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

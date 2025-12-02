@@ -1,189 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Training Certificate Views -->
-
-    <!-- List View -->
-    <record id="view_training_certificate_tree" model="ir.ui.view">
-        <field name="name">training.certificate.tree</field>
-        <field name="model">training.certificate</field>
-        <field name="arch" type="xml">
-            <list string="Chứng chỉ">
-                <field name="name"/>
-                <field name="employee_id"/>
-                <field name="course_id"/>
-                <field name="test_score" widget="percentage" optional="show"/>
-                <field name="grade" optional="show"/>
-                <field name="issue_date"/>
-                <field name="expiry_date"/>
-                <field name="is_expired" invisible="1"/>
-                <field name="state" decoration-success="state == 'issued'" decoration-danger="state == 'revoked'" decoration-warning="is_expired == True"/>
-            </list>
-        </field>
+    <record id="paperformat_certificate_landscape" model="report.paperformat">
+        <field name="name">Certificate Landscape A4</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
     </record>
 
-    <!-- Form View -->
-    <record id="view_training_certificate_form" model="ir.ui.view">
-        <field name="name">training.certificate.form</field>
+    <record id="action_report_training_certificate" model="ir.actions.report">
+        <field name="name">Chứng chỉ đào tạo</field>
         <field name="model">training.certificate</field>
-        <field name="arch" type="xml">
-            <form string="Chứng chỉ">
-                <header>
-                    <button name="action_issue" string="Cấp chứng chỉ" type="object" invisible="state != 'draft'" class="oe_highlight"/>
-                    <button name="action_send_email" string="Gửi Email" type="object" invisible="state != 'issued'" class="oe_highlight"/>
-                    <button name="action_revoke" string="Thu hồi" type="object" invisible="state == 'revoked'" groups="training_management.group_training_manager"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,issued,revoked"/>
-                </header>
-                <sheet>
-                    <div class="alert alert-warning" role="alert" invisible="not is_expired">
-                        <i class="fa fa-warning"/>
- Chứng chỉ đã hết hạn
-                    </div>
-                    <div class="oe_title">
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
-                    </div>
-                    <group>
-                        <group>
-                            <field name="employee_id" readonly="state != 'draft'"/>
-                            <field name="course_id" readonly="state != 'draft'"/>
-                            <field name="enrollment_id" readonly="state != 'draft'"/>
-                            <field name="test_result_id" readonly="state != 'draft'"/>
-                        </group>
-                        <group>
-                            <field name="template_id" required="1"/>
-                            <field name="test_score" widget="percentage" readonly="state != 'draft'"/>
-                            <field name="grade" readonly="1"/>
-                            <field name="valid_years" invisible="state == 'revoked'"/>
-                        </group>
-                    </group>
-                    <group>
-                        <group string="Ngày tháng">
-                            <field name="issue_date" readonly="state != 'draft'"/>
-                            <field name="expiry_date" readonly="1"/>
-                            <field name="is_expired" readonly="1"/>
-                        </group>
-                        <group string="Gửi Email" invisible="state != 'issued'">
-                            <field name="email_sent" readonly="1"/>
-                            <field name="email_sent_date" readonly="1"/>
-                        </group>
-                    </group>
-                    <group string="Thu hồi" invisible="state != 'revoked'">
-                        <field name="revoke_reason" readonly="1"/>
-                        <field name="revoke_date" readonly="1"/>
-                    </group>
-                    <notebook>
-                        <page string="Xem trước chứng chỉ" invisible="state == 'draft'">
-                            <group>
-                                <field name="qr_code" widget="image" readonly="1"/>
-                                <field name="verification_url" widget="url" readonly="1"/>
-                            </group>
-                            <separator/>
-                            <field name="certificate_html" widget="html" readonly="1"/>
-                        </page>
-                    </notebook>
-                </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="message_ids"/>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">training_management.report_training_certificate</field>
+        <field name="report_file">training_management.report_training_certificate</field>
+        <field name="print_report_name">'Certificate_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_training_certificate"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_certificate_landscape"/>
+    </record>
+
+    <template id="report_training_certificate">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page" style="position: relative; width: 100%; height: 100%; font-family: 'Times New Roman', serif;">
+
+                    <t t-if="o.certificate_html">
+                        <div style="width: 100%; height: 100%;">
+                            <t t-raw="o.certificate_html"/>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <div style="width: 100%; height: 95vh; border: 10px double #5d4037; padding: 40px; text-align: center; box-sizing: border-box; background-color: #fffcf5; position: relative;">
+
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index: 0;">
+                                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="width: 500px;"/>
+                            </div>
+
+                            <div style="position: relative; z-index: 1;">
+                                <div style="margin-top: 20px;">
+                                    <h1 style="font-size: 50px; color: #5d4037; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 5px; font-weight: bold;">Chứng Nhận</h1>
+                                    <p style="font-size: 24px; color: #b08d55; font-style: italic; margin-top: 0;">Certificate of Completion</p>
+                                </div>
+
+                                <div style="margin-top: 40px;">
+                                    <p style="font-size: 18px; color: #555; margin-bottom: 10px;">Chứng nhận này được trân trọng trao cho</p>
+
+                                    <h2 style="font-size: 45px; color: #000; margin: 15px 0; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #ddd; display: inline-block; padding-bottom: 10px; min-width: 400px;">
+                                        <span t-field="o.employee_id.name"/>
+                                    </h2>
+
+                                    <p style="font-size: 18px; color: #555; margin-top: 20px;">Đã hoàn thành xuất sắc quy trình đào tạo</p>
+
+                                    <h3 style="font-size: 35px; color: #b08d55; margin: 15px 0; font-weight: bold;">
+                                        <span t-field="o.course_id.name"/>
+                                    </h3>
+                                </div>
+
+                                <div style="margin-top: 30px; font-size: 16px; color: #333; display: flex; justify-content: center; align-items: center; gap: 40px;">
+                                    <div>
+                                        <span>Ngày cấp: </span>
+                                        <strong>
+                                            <span t-field="o.issue_date" t-options='{"widget": "date"}'/>
+                                        </strong>
+                                    </div>
+                                    <div>|</div>
+                                    <div>
+                                        <span>Số hiệu: </span>
+                                        <strong>
+                                            <span t-field="o.name"/>
+                                        </strong>
+                                    </div>
+                                    <div>|</div>
+                                    <div>
+                                        <span>Xếp loại: </span>
+                                        <strong>
+                                            <span t-if="o.grade == 'excellent'" style="color: #d32f2f;">Xuất sắc</span>
+                                            <span t-if="o.grade == 'good'" style="color: #1976d2;">Giỏi</span>
+                                            <span t-if="o.grade == 'average'">Khá</span>
+                                            <span t-if="o.grade == 'pass'">Đạt</span>
+                                        </strong>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 80px; display: flex; justify-content: space-between; padding: 0 100px;">
+                                    <div style="text-align: center; width: 250px;">
+                                        <div style="height: 60px;"></div>
+                                        <div style="border-top: 2px solid #5d4037; margin: 10px auto; width: 80%;"></div>
+                                        <p style="font-weight: bold; color: #5d4037; font-size: 16px; margin: 0;">Trưởng Bộ Phận Đào Tạo</p>
+                                    </div>
+
+                                    <div style="text-align: center; width: 250px;">
+                                        <div style="height: 60px; display: flex; align-items: flex-end; justify-content: center;">
+                                            <img t-if="o.signature" t-att-src="image_data_uri(o.signature)" style="max-height: 60px; max-width: 150px;"/>
+                                        </div>
+                                        <div style="border-top: 2px solid #5d4037; margin: 10px auto; width: 80%;"></div>
+                                        <p style="font-weight: bold; color: #5d4037; font-size: 16px; margin: 0;">
+                                            <span t-if="o.signed_by" t-field="o.signed_by.name"/>
+                                            <br/>
+                                            <span t-else="">Giám Đốc Vận Hành</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; font-size: 12px; color: #999;">
+                                    <span t-field="o.company_id.name"/>
+ | Hệ thống Đào tạo &amp; Phát triển Nguồn nhân lực
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                 </div>
-            </form>
-        </field>
-    </record>
-
-    <!-- Search View -->
-    <record id="view_training_certificate_search" model="ir.ui.view">
-        <field name="name">training.certificate.search</field>
-        <field name="model">training.certificate</field>
-        <field name="arch" type="xml">
-            <search string="Tìm kiếm chứng chỉ">
-                <field name="name"/>
-                <field name="employee_id"/>
-                <field name="course_id"/>
-                <separator/>
-                <filter string="Nháp" name="filter_draft" domain="[('state', '=', 'draft')]"/>
-                <filter string="Đã cấp" name="filter_issued" domain="[('state', '=', 'issued')]"/>
-                <filter string="Đã thu hồi" name="filter_revoked" domain="[('state', '=', 'revoked')]"/>
-                <separator/>
-                <filter string="Đã gửi email" name="filter_email_sent" domain="[('email_sent', '=', True)]"/>
-                <separator/>
-                <group expand="0" string="Nhóm theo">
-                    <filter string="Nhân viên" name="group_employee" context="{'group_by': 'employee_id'}"/>
-                    <filter string="Khóa học" name="group_course" context="{'group_by': 'course_id'}"/>
-                    <filter string="Trạng thái" name="group_state" context="{'group_by': 'state'}"/>
-                    <filter string="Loại chứng chỉ" name="group_grade" context="{'group_by': 'grade'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
-    <!-- Certificate Template Views -->
-
-    <!-- Template Form View -->
-    <record id="view_training_certificate_template_form" model="ir.ui.view">
-        <field name="name">training.certificate.template.form</field>
-        <field name="model">training.certificate.template</field>
-        <field name="arch" type="xml">
-            <form string="Mẫu chứng chỉ">
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="active"/>
-                        </group>
-                    </group>
-                    <group string="Thiết kế HTML">
-                        <field name="layout" widget="html" nolabel="1" placeholder="Nhập mã HTML cho mẫu chứng chỉ...&#10;&#10;Các biến có thể sử dụng:&#10;{employee_name} - Tên nhân viên&#10;{course_name} - Tên khóa học&#10;{certificate_number} - Số chứng chỉ&#10;{issue_date} - Ngày cấp&#10;{expiry_date} - Ngày hết hạn&#10;{test_score} - Điểm số&#10;{grade} - Loại (xuất sắc, giỏi, khá, đạt)&#10;{company_name} - Tên công ty&#10;{qr_code} - Mã QR"/>
-                    </group>
-                    <group string="Ghi chú">
-                        <field name="description" placeholder="Mô tả về mẫu chứng chỉ này..."/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <!-- Template List View -->
-    <record id="view_training_certificate_template_list" model="ir.ui.view">
-        <field name="name">training.certificate.template.list</field>
-        <field name="model">training.certificate.template</field>
-        <field name="arch" type="xml">
-            <list string="Mẫu chứng chỉ">
-                <field name="name"/>
-                <field name="active" invisible="1"/>
-            </list>
-        </field>
-    </record>
-
-    <!-- Actions -->
-
-    <record id="action_training_certificate" model="ir.actions.act_window">
-        <field name="name">Chứng chỉ</field>
-        <field name="res_model">training.certificate</field>
-        <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_filter_issued': 1}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Tạo chứng chỉ mới
-            </p>
-            <p>
-                Chứng chỉ sẽ được tạo tự động khi học viên hoàn thành khóa học và đạt điểm kiểm tra.
-            </p>
-        </field>
-    </record>
-
-    <record id="action_training_certificate_template" model="ir.actions.act_window">
-        <field name="name">Mẫu chứng chỉ</field>
-        <field name="res_model">training.certificate.template</field>
-        <field name="view_mode">list,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Tạo mẫu chứng chỉ mới
-            </p>
-            <p>
-                Thiết kế mẫu chứng chỉ với HTML để sử dụng cho các khóa đào tạo.
-            </p>
-        </field>
-    </record>
-
+            </t>
+        </t>
+    </template>
 </odoo>

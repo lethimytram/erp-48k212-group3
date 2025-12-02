@@ -1,30 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Security Groups -->
-    <record id="module_training_management" model="ir.module.category">
-        <field name="name">Training Management</field>
-        <field name="description">Quản lý đào tạo nội bộ</field>
-        <field name="sequence">20</field>
-    </record>
+    <data noupdate="1">
+        <!-- Tạo Category cho Module -->
+        <record id="module_category_training" model="ir.module.category">
+            <field name="name">Đào tạo &amp; SOP (F&amp;B)</field>
+            <field name="description">Quản lý đào tạo cho chuỗi cửa hàng</field>
+            <field name="sequence">20</field>
+        </record>
 
-    <!-- User: Học viên - Chỉ xem và đăng ký khóa học của mình -->
-    <record id="group_training_trainee" model="res.groups">
-        <field name="name">Học viên</field>
-        <field name="category_id" ref="module_training_management"/>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-    </record>
+        <!-- GROUP 1: NHÂN VIÊN (Tương ứng Trainee cũ) -->
+        <!-- Quyền: Chỉ thấy Góc học tập của mình -->
+        <record id="group_training_trainee" model="res.groups">
+            <field name="name">Nhân viên / Học viên</field>
+            <field name="category_id" ref="module_category_training"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
 
-    <!-- User: Giảng viên - Quản lý khóa học và học viên của mình -->
-    <record id="group_training_trainer" model="res.groups">
-        <field name="name">Giảng viên</field>
-        <field name="category_id" ref="module_training_management"/>
-        <field name="implied_ids" eval="[(4, ref('group_training_trainee'))]"/>
-    </record>
+        <!-- GROUP 2: CỬA HÀNG TRƯỞNG (Tương ứng Trainer cũ) -->
+        <!-- Quyền: Thấy Góc học tập + Quản lý Cửa hàng -->
+        <!-- Kế thừa: group_training_trainee (Vì SM cũng phải học) -->
+        <record id="group_training_trainer" model="res.groups">
+            <field name="name">Cửa hàng trưởng (SM)</field>
+            <field name="category_id" ref="module_category_training"/>
+            <field name="implied_ids" eval="[(4, ref('group_training_trainee'))]"/>
+        </record>
 
-    <!-- Manager: Quản lý đào tạo - Quản lý toàn bộ module -->
-    <record id="group_training_manager" model="res.groups">
-        <field name="name">Quản lý đào tạo</field>
-        <field name="category_id" ref="module_training_management"/>
-        <field name="implied_ids" eval="[(4, ref('group_training_trainer'))]"/>
-    </record>
+        <!-- GROUP 3: HỘI SỞ / QUẢN LÝ (Tương ứng Manager cũ) -->
+        <!-- Quyền: Thấy tất cả -->
+        <!-- Kế thừa: group_training_trainer -->
+        <record id="group_training_manager" model="res.groups">
+            <field name="name">Quản trị Hội sở (L&amp;D)</field>
+            <field name="category_id" ref="module_category_training"/>
+            <field name="implied_ids" eval="[(4, ref('group_training_trainer'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+    </data>
 </odoo>

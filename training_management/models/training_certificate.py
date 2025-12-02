@@ -3,10 +3,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import base64
-import qrcode
-from io import BytesIO
 from datetime import datetime, timedelta
-
 
 class TrainingCertificate(models.Model):
     _name = 'training.certificate'
@@ -18,12 +15,16 @@ class TrainingCertificate(models.Model):
     employee_id = fields.Many2one('hr.employee', string='Học viên', required=True, tracking=True)
     course_id = fields.Many2one('training.course', string='Khóa học', required=True, tracking=True)
     enrollment_id = fields.Many2one('training.enrollment', string='Đăng ký')
-    test_result_id = fields.Many2one('training.test.result', string='Kết quả thi')
+    
+    # --- SỬA LỖI LIÊN KẾT: Đổi sang training.exam.attempt ---
+    exam_attempt_id = fields.Many2one('training.exam.attempt', string='Kết quả thi')
     
     # Thông tin chứng chỉ
     issue_date = fields.Date(string='Ngày cấp', default=fields.Date.today, tracking=True)
-    expiry_date = fields.Date(string='Ngày hết hạn')
+    
+    # --- TỐI ƯU LOGIC: Dùng compute field cho ngày hết hạn ---
     valid_years = fields.Integer(string='Hiệu lực (năm)', default=0, help="0 = Vô thời hạn")
+    expiry_date = fields.Date(string='Ngày hết hạn', compute='_compute_expiry_date', store=True)
     is_expired = fields.Boolean(string='Hết hạn', compute='_compute_is_expired')
     
     # Điểm số
@@ -39,10 +40,6 @@ class TrainingCertificate(models.Model):
     template_id = fields.Many2one('training.certificate.template', string='Mẫu chứng chỉ')
     certificate_html = fields.Html(string='Nội dung chứng chỉ', compute='_compute_certificate_html')
     attachment_id = fields.Many2one('ir.attachment', string='File PDF')
-    
-    # QR Code
-    qr_code = fields.Binary(string='QR Code', compute='_compute_qr_code', store=True)
-    verification_url = fields.Char(string='Link xác thực', compute='_compute_verification_url')
     
     # Trạng thái
     state = fields.Selection([
@@ -69,29 +66,17 @@ class TrainingCertificate(models.Model):
         for vals in vals_list:
             if vals.get('name', _('New')) == _('New'):
                 vals['name'] = self.env['ir.sequence'].next_by_code('training.certificate') or _('New')
-            
-            # Tính expiry_date nếu có valid_years
-            if vals.get('valid_years', 0) > 0:
-                issue_date = vals.get('issue_date', fields.Date.today())
-                if isinstance(issue_date, str):
-                    issue_date = fields.Date.from_string(issue_date)
-                vals['expiry_date'] = issue_date + timedelta(days=365 * vals['valid_years'])
-        
         return super(TrainingCertificate, self).create(vals_list)
-    
-    def write(self, vals):
-        # Cập nhật expiry_date khi thay đổi valid_years hoặc issue_date
-        if 'valid_years' in vals or 'issue_date' in vals:
-            for record in self:
-                valid_years = vals.get('valid_years', record.valid_years)
-                if valid_years > 0:
-                    issue_date = vals.get('issue_date', record.issue_date)
-                    if isinstance(issue_date, str):
-                        issue_date = fields.Date.from_string(issue_date)
-                    vals['expiry_date'] = issue_date + timedelta(days=365 * valid_years)
-        
-        return super(TrainingCertificate, self).write(vals)
-    
+
+    # --- LOGIC MỚI: Tự động tính ngày hết hạn dựa trên valid_years ---
+    @api.depends('issue_date', 'valid_years')
+    def _compute_expiry_date(self):
+        for record in self:
+            if record.valid_years > 0 and record.issue_date:
+                record.expiry_date = record.issue_date + timedelta(days=365 * record.valid_years)
+            else:
+                record.expiry_date = False
+
     @api.depends('expiry_date')
     def _compute_is_expired(self):
         today = fields.Date.today()
@@ -110,31 +95,8 @@ class TrainingCertificate(models.Model):
             else:
                 record.grade = 'pass'
     
-    @api.depends('name')
-    def _compute_verification_url(self):
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        for record in self:
-            if record.name and record.name != 'New':
-                record.verification_url = f"{base_url}/certificate/verify/{record.name}"
-            else:
-                record.verification_url = False
-    
-    @api.depends('verification_url')
-    def _compute_qr_code(self):
-        for record in self:
-            if record.verification_url:
-                qr = qrcode.QRCode(version=1, box_size=10, border=5)
-                qr.add_data(record.verification_url)
-                qr.make(fit=True)
-                
-                img = qr.make_image(fill_color="black", back_color="white")
-                buffer = BytesIO()
-                img.save(buffer, format='PNG')
-                record.qr_code = base64.b64encode(buffer.getvalue())
-            else:
-                record.qr_code = False
-    
-    @api.depends('template_id', 'employee_id', 'course_id', 'issue_date', 'test_score')
+    # --- XÓA LOGIC QR CODE TRONG COMPUTE HTML ---
+    @api.depends('template_id', 'employee_id', 'course_id', 'issue_date', 'test_score', 'grade')
     def _compute_certificate_html(self):
         for record in self:
             if record.template_id and record.template_id.layout:
@@ -149,11 +111,6 @@ class TrainingCertificate(models.Model):
                 html = html.replace('{test_score}', f"{record.test_score:.1f}" if record.test_score else '')
                 html = html.replace('{grade}', dict(record._fields['grade'].selection).get(record.grade, '') if record.grade else '')
                 html = html.replace('{company_name}', record.company_id.name or '')
-                
-                # Add QR code
-                if record.qr_code:
-                    qr_img = f'<img src="data:image/png;base64,{record.qr_code.decode()}" style="width: 100px; height: 100px;"/>'
-                    html = html.replace('{qr_code}', qr_img)
                 
                 record.certificate_html = html
             else:
@@ -224,6 +181,7 @@ class TrainingCertificate(models.Model):
             return
         
         # Generate PDF from HTML
+        # Lưu ý: Cần đảm bảo report action 'training_management.report_training_certificate' đã tồn tại trong XML
         pdf_content = self.env['ir.actions.report']._render_qweb_pdf(
             'training_management.report_training_certificate',
             self.id,
@@ -268,6 +226,8 @@ class TrainingCertificateTemplate(models.Model):
 
     name = fields.Char(string='Tên mẫu', required=True)
     description = fields.Text(string='Mô tả')
+    
+    # --- Xóa hướng dẫn về QR Code trong help ---
     layout = fields.Html(string='Bố cục', help="""
         Các biến có thể dùng:
         - {employee_name}: Tên học viên
@@ -278,7 +238,6 @@ class TrainingCertificateTemplate(models.Model):
         - {test_score}: Điểm thi
         - {grade}: Xếp loại
         - {company_name}: Tên công ty
-        - {qr_code}: Mã QR
     """)
     
     # Preview

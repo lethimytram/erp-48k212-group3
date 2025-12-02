@@ -1,95 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Training Certificate PDF Report -->
+    <!-- 1. ĐỊNH NGHĨA ACTION REPORT -->
+    <!-- Lưu ý: ID này phải khớp với hàm _generate_pdf trong Python -->
+    <record id="action_report_certificate" model="ir.actions.report">
+        <field name="name">Chứng chỉ đào tạo</field>
+        <field name="model">training.certificate</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">training_management.report_certificate_document</field>
+        <field name="report_file">training_management.report_certificate_document</field>
+        <field name="print_report_name">'Certificate_%s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_training_certificate"/>
+        <field name="binding_type">report</field>
+        <!-- Use default A4 landscape format -->
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
 
-    <report id="action_report_training_certificate" model="training.certificate" string="Chứng chỉ đào tạo" report_type="qweb-pdf" name="training_management.report_training_certificate_document" file="training_management.report_training_certificate_document" print_report_name="'Certificate_%s' % (object.certificate_number)"/>
-
-    <template id="report_training_certificate_document">
+    <!-- 2. TEMPLATE BÁO CÁO (QWEB VIEW) -->
+    <template id="report_certificate_document">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="web.external_layout">
-                    <div class="page">
-                        <!-- Use the HTML template from certificate -->
+                <div class="page" style="position: relative; width: 100%; height: 100%; font-family: 'Times New Roman', serif;">
+
+                    <!-- TRƯỜNG HỢP 1: Dùng Mẫu HTML Động (Nếu Admin đã thiết kế trong phần Cấu hình) -->
+                    <t t-if="o.certificate_html">
                         <t t-raw="o.certificate_html"/>
-                    </div>
-                </t>
-            </t>
-        </t>
-    </template>
+                    </t>
 
-    <!-- Alternative: Simple Report Template (if HTML rendering has issues) -->
-    <template id="report_training_certificate_simple">
-        <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <div class="page" style="font-family: Arial, sans-serif; padding: 40px;">
-                    <div style="border: 10px double #4CAF50; padding: 60px; text-align: center; background: white;">
-                        <h1 style="font-size: 56px; color: #4CAF50; margin: 20px 0;">CHỨNG NHẬN</h1>
-                        <p style="font-size: 20px; color: #666;">Certificate of Completion</p>
+                    <!-- TRƯỜNG HỢP 2: Mẫu Mặc định (Dùng khi chưa có Template HTML) -->
+                    <!-- Thiết kế style Highlands (Xanh đậm + Vàng đồng) -->
+                    <div t-else="" style="width: 100%; height: 98%; border: 10px double #5d4037; padding: 40px; text-align: center; box-sizing: border-box; background-color: #fffcf5;">
 
-                        <div style="margin: 60px 0;">
-                            <p style="font-size: 20px; color: #666;">Trao cho / Awarded to</p>
-                            <h2 style="font-size: 42px; font-weight: bold; margin: 20px 0; color: #333;">
-                                <t t-esc="o.employee_id.name"/>
+                        <!-- Header -->
+                        <div style="margin-top: 30px;">
+                            <h1 style="font-size: 50px; color: #5d4037; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 10px; font-weight: bold;">Chứng Nhận</h1>
+                            <p style="font-size: 24px; color: #b08d55; font-style: italic;">Certificate of Completion</p>
+                        </div>
+
+                        <!-- Body -->
+                        <div style="margin-top: 50px;">
+                            <p style="font-size: 18px; color: #555;">Chứng nhận này được trân trọng trao cho</p>
+
+                            <h2 style="font-size: 45px; color: #000; margin: 25px 0; font-weight: bold; text-transform: uppercase;">
+                                <span t-field="o.employee_id.name"/>
                             </h2>
 
-                            <p style="font-size: 20px; color: #666; margin-top: 40px;">Đã hoàn thành khóa học / Has successfully completed</p>
-                            <h3 style="font-size: 28px; color: #666; margin: 20px 0;">
-                                <t t-esc="o.course_id.name"/>
+                            <p style="font-size: 18px; color: #555;">Đã hoàn thành xuất sắc quy trình đào tạo</p>
+
+                            <h3 style="font-size: 35px; color: #b08d55; margin: 20px 0; font-weight: bold;">
+                                <span t-field="o.course_id.name"/>
                             </h3>
                         </div>
 
-                        <div style="margin: 40px 0; font-size: 18px; line-height: 2;">
-                            <p>
-                                <strong>Điểm số / Score:</strong>
-                                <t t-esc="o.test_score"/>
-% |
-                                <strong>Xếp loại / Grade:</strong>
-                                <t t-esc="o.grade"/>
-                            </p>
-                            <p>
-                                <strong>Ngày cấp / Issue Date:</strong>
-                                <t t-esc="o.issue_date"/>
- |
-                                <strong>Hiệu lực đến / Valid Until:</strong>
-                                <t t-esc="o.expiry_date"/>
-                            </p>
-                        </div>
+                        <!-- Details Row -->
+                        <div style="margin-top: 40px; font-size: 16px; color: #333;">
+                            <span>Ngày cấp: <strong>
+                                <span t-field="o.issue_date" t-options='{"widget": "date"}'/>
+                            </strong>
+                        </span>
+                        <span style="margin: 0 30px;">•</span>
+                        <span>Số hiệu: <strong>
+                            <span t-field="o.name"/>
+                        </strong>
+                    </span>
+                    <span style="margin: 0 30px;">•</span>
+                    <span>Xếp loại: 
+                        <strong>
+                            <span t-if="o.grade == 'excellent'">Xuất sắc</span>
+                            <span t-if="o.grade == 'good'">Giỏi</span>
+                            <span t-if="o.grade == 'pass'">Đạt</span>
+                        </strong>
+                    </span>
+                </div>
 
-                        <div style="margin-top: 60px;">
-                            <t t-if="o.qr_code">
-                                <p style="font-size: 14px; color: #666; margin-bottom: 10px;">Quét mã để xác thực / Scan to verify</p>
-                                <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')" style="max-width: 120px; border: 3px solid #4CAF50; padding: 10px;"/>
-                            </t>
-                        </div>
+                <!-- Signatures -->
+                <div style="margin-top: 90px; display: flex; justify-content: space-between; padding: 0 120px;">
+                    <div style="text-align: center;">
+                        <div style="height: 50px;"></div>                        <!-- Khoảng trống chữ ký -->
+                        <div style="border-top: 2px solid #5d4037; width: 220px; margin: 10px auto;"></div>
+                        <p style="font-weight: bold; color: #5d4037; font-size: 18px;">Trưởng Bộ Phận Đào Tạo</p>
+                    </div>
 
-                        <div style="margin-top: 60px; display: flex; justify-content: space-around;">
-                            <div style="text-align: center;">
-                                <div style="border-top: 2px solid #333; width: 200px; margin: 20px auto 10px;"></div>
-                                <strong>Giám đốc Đào tạo</strong>
-                                <br/>
-                                <em>Training Director</em>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="border-top: 2px solid #333; width: 200px; margin: 20px auto 10px;"></div>
-                                <strong>Giám đốc Công ty</strong>
-                                <br/>
-                                <em>CEO</em>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 40px; font-size: 14px; color: #999;">
-                            <p>
-                                <strong>
-                                    <t t-esc="o.company_id.name"/>
-                                </strong>
-                            </p>
-                            <p>Mã số / Certificate No: <t t-esc="o.certificate_number"/>
-                            </p>
-                        </div>
+                    <div style="text-align: center;">
+                        <div style="height: 50px;"></div>                        <!-- Khoảng trống chữ ký -->
+                        <div style="border-top: 2px solid #5d4037; width: 220px; margin: 10px auto;"></div>
+                        <p style="font-weight: bold; color: #5d4037; font-size: 18px;">Giám Đốc Vận Hành</p>
                     </div>
                 </div>
-            </t>
-        </t>
-    </template>
 
+                <!-- Footer -->
+                <div style="position: absolute; bottom: 20px; left: 0; width: 100%; text-align: center; font-size: 12px; color: #999;">
+                    <span t-field="o.company_id.name"/>
+ | Hệ thống Đào tạo Nội bộ
+                </div>
+            </div>
+
+        </div>
+    </t>
+</t>
+</template>
 </odoo>

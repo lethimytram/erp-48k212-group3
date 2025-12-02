@@ -3,284 +3,150 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-
 class TrainingCourse(models.Model):
     _name = 'training.course'
-    _description = 'Khóa học đào tạo'
+    _description = 'Quy trình vận hành chuẩn (SOP)'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'sequence, name'
 
-    # Thông tin cơ bản
+    # --- THÔNG TIN CƠ BẢN (F&B STYLE) ---
     name = fields.Char(
-        string='Tên khóa học',
+        string='Tên quy trình / SOP',
         required=True,
         tracking=True,
-        help='Tên đầy đủ của khóa học'
+        help='Ví dụ: Quy trình Pha chế Phin Sữa Đá, Quy trình Vệ sinh máy Cafe'
     )
     code = fields.Char(
-        string='Mã khóa học',
+        string='Mã quy trình',
         required=True,
         copy=False,
         tracking=True,
-        help='Mã định danh duy nhất cho khóa học'
+        default=lambda self: _('New'),
+        help='Mã định danh (Vd: SOP-BAR-01)'
     )
-    sequence = fields.Integer(
-        string='Thứ tự',
-        default=10,
-        help='Thứ tự hiển thị'
-    )
-    active = fields.Boolean(
-        string='Hoạt động',
-        default=True,
-        tracking=True
-    )
-    
-    # Mô tả và nội dung
-    description = fields.Html(
-        string='Mô tả khóa học',
-        tracking=True,
-        help='Mô tả chi tiết về nội dung và mục tiêu khóa học'
-    )
-    objectives = fields.Text(
-        string='Mục tiêu học tập',
-        help='Mục tiêu học viên đạt được sau khóa học'
-    )
-    prerequisites = fields.Text(
-        string='Điều kiện tiên quyết',
-        help='Kiến thức hoặc kỹ năng cần có trước khi tham gia'
-    )
-    
-    # Phân loại
+    sequence = fields.Integer(string='Thứ tự ưu tiên', default=10)
+    active = fields.Boolean(string='Đang áp dụng', default=True, tracking=True)
+
+    # --- PHÂN LOẠI & ĐỐI TƯỢNG ÁP DỤNG ---
     category_id = fields.Many2one(
         'training.course.category',
-        string='Danh mục',
-        tracking=True,
-        help='Phân loại khóa học theo lĩnh vực'
+        string='Bộ phận (Bar/Bếp/Sảnh)',
+        tracking=True
     )
+    
+    # [QUAN TRỌNG CHO F&B] Liên kết với Chức vụ
+    job_ids = fields.Many2many(
+        'hr.job',
+        string='Vị trí áp dụng',
+        help='Chỉ những nhân viên thuộc vị trí này mới cần học',
+        tracking=True
+    )
+
     level = fields.Selection([
-        ('beginner', 'Cơ bản'),
-        ('intermediate', 'Trung cấp'),
-        ('advanced', 'Nâng cao'),
-        ('expert', 'Chuyên gia')
-    ], string='Cấp độ', default='beginner', required=True, tracking=True)
-    
+        ('beginner', 'Hội nhập / Thử việc'),
+        ('intermediate', 'Nhân viên chính thức'),
+        ('advanced', 'Trưởng ca (Shift Leader)'),
+        ('expert', 'Cửa hàng trưởng (SM)')
+    ], string='Cấp độ yêu cầu', default='beginner', required=True, tracking=True)
+
     type = fields.Selection([
-        ('internal', 'Nội bộ'),
-        ('external', 'Bên ngoài'),
-        ('online', 'Trực tuyến'),
-        ('blended', 'Kết hợp')
-    ], string='Loại hình', default='internal', required=True, tracking=True)
+        ('internal', 'Đào tạo nội bộ (OJT)'),
+        ('online', 'Học qua App (E-learning)'),
+        ('blended', 'Kết hợp (Lý thuyết + Thực hành)')
+    ], string='Hình thức', default='blended', required=True)
+
+    # --- NỘI DUNG & THỜI LƯỢNG ---
+    description = fields.Html(
+        string='Nội dung chi tiết',
+        help='Mô tả các bước thực hiện, hình ảnh minh họa...'
+    )
+    objectives = fields.Text(string='Yêu cầu đầu ra', help='Nhân viên phải làm được gì sau khi học?')
+    prerequisites = fields.Text(string='Yêu cầu tiên quyết')
+
+    duration = fields.Float(string='Thời lượng (giờ)', default=1.0, help='Thời gian dự kiến để học xong SOP này')
     
-    # Thời gian và địa điểm
-    duration = fields.Float(
-        string='Thời lượng (giờ)',
-        help='Tổng số giờ học'
-    )
-    duration_days = fields.Integer(
-        string='Số ngày',
-        compute='_compute_duration_days',
-        store=True,
-        help='Số ngày học (8 giờ/ngày)'
-    )
-    location = fields.Char(
-        string='Địa điểm',
-        help='Địa điểm tổ chức khóa học'
-    )
-    
-    # Giảng viên
-    trainer_ids = fields.Many2many(
-        'training.trainer',
-        'training_course_trainer_rel',
-        'course_id',
-        'trainer_id',
-        string='Giảng viên',
-        tracking=True
-    )
+    # --- QUẢN LÝ (MENTORING) ---
+    # Giả định bạn đã có model training.trainer, nếu chưa thì đổi thành res.users
     main_trainer_id = fields.Many2one(
-        'training.trainer',
-        string='Giảng viên chính',
+        'res.users', 
+        string='Người biên soạn / Mentor',
         tracking=True
     )
+    # trainer_ids = fields.Many2many('training.trainer', string='Đội ngũ hỗ trợ')
+
+    # --- TÀI NGUYÊN ---
+    # Cần đảm bảo model training.material đã tồn tại
+    material_ids = fields.One2many('training.material', 'course_id', string='Công thức & Video')
+    material_count = fields.Integer(compute='_compute_material_count')
+
+    # --- ĐĂNG KÝ & HỌC VIÊN ---
+    # Cần đảm bảo model training.enrollment đã tồn tại
+    enrollment_ids = fields.One2many('training.enrollment', 'course_id', string='Nhân viên đang học')
+    enrollment_count = fields.Integer(compute='_compute_enrollment_count')
     
-    # Tài liệu
-    material_ids = fields.One2many(
-        'training.material',
-        'course_id',
-        string='Tài liệu khóa học'
-    )
-    material_count = fields.Integer(
-        string='Số tài liệu',
-        compute='_compute_material_count'
-    )
+    max_participants = fields.Integer(string='Giới hạn học viên', default=0) 
+    min_participants = fields.Integer(string='Tối thiểu', default=0)
+
+    # --- SÁT HẠCH & CHỨNG CHỈ (F&B CORE) ---
+    has_test = fields.Boolean(string='Yêu cầu sát hạch?', default=True)
+    passing_score = fields.Float(string='Điểm đạt (%)', default=80.0)
     
-    # Học viên và đăng ký
-    max_participants = fields.Integer(
-        string='Số học viên tối đa',
-        default=30,
-        help='Số lượng học viên tối đa cho mỗi khóa'
-    )
-    min_participants = fields.Integer(
-        string='Số học viên tối thiểu',
-        default=5,
-        help='Số lượng học viên tối thiểu để mở khóa'
-    )
-    enrollment_ids = fields.One2many(
-        'training.enrollment',
-        'course_id',
-        string='Đăng ký'
-    )
-    enrollment_count = fields.Integer(
-        string='Số đăng ký',
-        compute='_compute_enrollment_count'
-    )
+    issue_certificate = fields.Boolean(string='Cấp chứng nhận?', default=True)
+    # Cần đảm bảo model training.certificate.template đã tồn tại
+    certificate_template_id = fields.Many2one('training.certificate.template', string='Mẫu chứng nhận')
     
-    # Buổi học
-    session_ids = fields.One2many(
-        'training.session',
-        'course_id',
-        string='Buổi học'
+    validity_months = fields.Integer(
+        string='Hiệu lực (tháng)', 
+        default=0, 
+        help='0 là vĩnh viễn. Nhập số tháng để hệ thống nhắc thi lại.'
     )
-    session_count = fields.Integer(
-        string='Số buổi học',
-        compute='_compute_session_count'
-    )
+
+    # --- LOGIC KHÁC ---
+    skill_ids = fields.Many2many('hr.skill', string='Kỹ năng đạt được')
+    cost = fields.Monetary(string='Chi phí tổ chức', currency_field='currency_id')
+    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
     
-    # Đánh giá và chứng chỉ
-    has_test = fields.Boolean(
-        string='Có bài kiểm tra',
-        default=True,
-        help='Khóa học có bài kiểm tra cuối khóa'
-    )
-    passing_score = fields.Float(
-        string='Điểm đạt (%)',
-        default=70.0,
-        help='Điểm tối thiểu để đạt khóa học'
-    )
-    
-    # Certificate fields
-    issue_certificate = fields.Boolean(
-        string='Cấp chứng chỉ',
-        default=True,
-        help='Cấp chứng chỉ khi hoàn thành'
-    )
-    certificate_template_id = fields.Many2one(
-        'training.certificate.template',
-        string='Mẫu chứng chỉ'
-    )
-    
-    # Kỹ năng liên quan
-    skill_ids = fields.Many2many(
-        'hr.skill',
-        'training_course_skill_rel',
-        'course_id',
-        'skill_id',
-        string='Kỹ năng đạt được',
-        help='Kỹ năng học viên sẽ có sau khi hoàn thành'
-    )
-    
-    # Chi phí
-    cost = fields.Monetary(
-        string='Chi phí',
-        currency_field='currency_id',
-        help='Chi phí tổ chức khóa học'
-    )
-    currency_id = fields.Many2one(
-        'res.currency',
-        string='Tiền tệ',
-        default=lambda self: self.env.company.currency_id
-    )
-    
-    # Trạng thái
     state = fields.Selection([
-        ('draft', 'Nháp'),
-        ('published', 'Công bố'),
-        ('in_progress', 'Đang diễn ra'),
-        ('completed', 'Hoàn thành'),
-        ('cancelled', 'Hủy bỏ')
+        ('draft', 'Soạn thảo'),
+        ('published', 'Ban hành'),
+        ('archived', 'Lưu trữ')
     ], string='Trạng thái', default='draft', required=True, tracking=True)
-    
-    # Người phụ trách
-    responsible_id = fields.Many2one(
-        'res.users',
-        string='Người phụ trách',
-        default=lambda self: self.env.user,
-        tracking=True
-    )
-    company_id = fields.Many2one(
-        'res.company',
-        string='Công ty',
-        default=lambda self: self.env.company
-    )
-    
-    # Ghi chú
-    notes = fields.Text(string='Ghi chú')
-    
-    # Constraints
+
+    responsible_id = fields.Many2one('res.users', string='Phụ trách chuyên môn', default=lambda self: self.env.user)
+    company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
+    notes = fields.Text(string='Ghi chú nội bộ')
+
+    # --- CONSTRAINTS & COMPUTES ---
     _sql_constraints = [
-        ('code_unique', 'UNIQUE(code)', 'Mã khóa học phải là duy nhất!'),
-        ('check_participants', 'CHECK(max_participants >= min_participants)',
-         'Số học viên tối đa phải lớn hơn hoặc bằng số tối thiểu!'),
-        ('check_passing_score', 'CHECK(passing_score >= 0 AND passing_score <= 100)',
-         'Điểm đạt phải từ 0 đến 100!'),
+        ('code_unique', 'UNIQUE(code)', 'Mã SOP phải là duy nhất!'),
+        ('check_passing_score', 'CHECK(passing_score >= 0 AND passing_score <= 100)', 'Điểm đạt phải từ 0-100!'),
     ]
-    
-    @api.depends('duration')
-    def _compute_duration_days(self):
-        for record in self:
-            record.duration_days = int(record.duration / 8) if record.duration else 0
-    
+
     @api.depends('material_ids')
     def _compute_material_count(self):
         for record in self:
             record.material_count = len(record.material_ids)
-    
+
     @api.depends('enrollment_ids')
     def _compute_enrollment_count(self):
         for record in self:
             record.enrollment_count = len(record.enrollment_ids)
-    
-    @api.depends('session_ids')
-    def _compute_session_count(self):
-        for record in self:
-            record.session_count = len(record.session_ids)
-    
-    @api.constrains('max_participants', 'min_participants')
-    def _check_participants(self):
-        for record in self:
-            if record.max_participants < record.min_participants:
-                raise ValidationError(_('Số học viên tối đa phải lớn hơn hoặc bằng số tối thiểu!'))
-    
-    @api.constrains('passing_score')
-    def _check_passing_score(self):
-        for record in self:
-            if record.passing_score < 0 or record.passing_score > 100:
-                raise ValidationError(_('Điểm đạt phải từ 0 đến 100!'))
-    
+
+    # Các hàm Action button
     def action_publish(self):
-        """Công bố khóa học"""
         self.write({'state': 'published'})
         
-    def action_start(self):
-        """Bắt đầu khóa học"""
-        self.write({'state': 'in_progress'})
-        
-    def action_complete(self):
-        """Hoàn thành khóa học"""
-        self.write({'state': 'completed'})
-        
-    def action_cancel(self):
-        """Hủy bỏ khóa học"""
-        self.write({'state': 'cancelled'})
-        
+    def action_archive(self):
+        self.write({'state': 'archived'})
+
     def action_reset_to_draft(self):
-        """Đưa về nháp"""
         self.write({'state': 'draft'})
-    
+
+    # Các hàm View
     def action_view_materials(self):
-        """Xem tài liệu"""
         self.ensure_one()
         return {
-            'name': _('Tài liệu khóa học'),
+            'name': _('Công thức & Tài liệu'),
             'type': 'ir.actions.act_window',
             'res_model': 'training.material',
             'view_mode': 'tree,form',
@@ -289,55 +155,39 @@ class TrainingCourse(models.Model):
         }
     
     def action_view_enrollments(self):
-        """Xem đăng ký"""
         self.ensure_one()
         return {
-            'name': _('Đăng ký khóa học'),
+            'name': _('Danh sách nhân viên'),
             'type': 'ir.actions.act_window',
             'res_model': 'training.enrollment',
             'view_mode': 'tree,form',
             'domain': [('course_id', '=', self.id)],
             'context': {'default_course_id': self.id}
         }
-    
-    def action_view_sessions(self):
-        """Xem buổi học"""
-        self.ensure_one()
-        return {
-            'name': _('Buổi học'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'training.session',
-            'view_mode': 'tree,form,calendar',
-            'domain': [('course_id', '=', self.id)],
-            'context': {'default_course_id': self.id}
-        }
 
-
+# --- MODEL DANH MỤC (ĐÃ THÊM SEQUENCE) ---
 class TrainingCourseCategory(models.Model):
     _name = 'training.course.category'
-    _description = 'Danh mục khóa học'
-    _order = 'name'
+    _description = 'Nhóm nghiệp vụ / Bộ phận'
+    _order = 'sequence, name'
     
-    name = fields.Char(string='Tên danh mục', required=True, translate=True)
-    code = fields.Char(string='Mã danh mục')
-    parent_id = fields.Many2one('training.course.category', string='Danh mục cha')
-    child_ids = fields.One2many('training.course.category', 'parent_id', string='Danh mục con')
-    description = fields.Text(string='Mô tả')
-    active = fields.Boolean(string='Hoạt động', default=True)
-    course_ids = fields.One2many('training.course', 'category_id', string='Khóa học')
-    course_count = fields.Integer(string='Số khóa học', compute='_compute_course_count')
+    # Đã thêm field sequence để fix lỗi XML
+    sequence = fields.Integer(string='Thứ tự', default=10)
+    
+    name = fields.Char(string='Tên bộ phận', required=True, translate=True)
+    code = fields.Char(string='Mã nhóm')
+    parent_id = fields.Many2one('training.course.category', string='Thuộc khối')
+    child_ids = fields.One2many('training.course.category', 'parent_id', string='Nhóm con')
+    description = fields.Text(string='Mô tả chức năng')
+    active = fields.Boolean(string='Đang hoạt động', default=True)
+    course_ids = fields.One2many('training.course', 'category_id', string='Các quy trình (SOP)')
+    course_count = fields.Integer(string='Số lượng SOP', compute='_compute_course_count')
     
     _sql_constraints = [
-        ('code_unique', 'UNIQUE(code)', 'Mã danh mục phải là duy nhất!'),
+        ('code_unique', 'UNIQUE(code)', 'Mã nhóm phải là duy nhất!'),
     ]
     
     @api.depends('course_ids')
     def _compute_course_count(self):
         for record in self:
             record.course_count = len(record.course_ids)
-    
-    @api.constrains('parent_id')
-    def _check_parent_recursion(self):
-        for record in self:
-            if record.parent_id and record._has_cycle():
-                raise ValidationError(_('Không thể tạo danh mục con đệ quy!'))

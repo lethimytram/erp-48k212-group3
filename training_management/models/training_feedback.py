@@ -1,52 +1,63 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
-
+from odoo.exceptions import UserError
 
 class TrainingFeedback(models.Model):
     _name = 'training.feedback'
-    _description = 'Khảo sát hài lòng'
+    _description = 'Khảo sát chất lượng đào tạo'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
+    _rec_name = 'enrollment_id'
 
-    name = fields.Char(string='Tiêu đề', compute='_compute_name', store=True)
-    employee_id = fields.Many2one('hr.employee', string='Học viên', required=True, tracking=True)
-    course_id = fields.Many2one('training.course', string='Khóa học', required=True, tracking=True)
-    enrollment_id = fields.Many2one('training.enrollment', string='Đăng ký')
-    trainer_id = fields.Many2one('training.trainer', string='Giảng viên đánh giá')
+    # Liên kết dữ liệu
+    enrollment_id = fields.Many2one('training.enrollment', string='Mã đăng ký', required=True, ondelete='cascade')
+    employee_id = fields.Many2one('hr.employee', related='enrollment_id.employee_id', string='Học viên', store=True, readonly=True)
+    course_id = fields.Many2one('training.course', related='enrollment_id.course_id', string='Khóa học', store=True, readonly=True)
+    trainer_id = fields.Many2one('hr.employee', string='Giảng viên/Người hướng dẫn') # Có thể là Cửa hàng trưởng
     
-    # Đánh giá
-    overall_rating = fields.Selection([
-        ('1', 'Rất không hài lòng'),
-        ('2', 'Không hài lòng'),
+    # Tiêu chí đánh giá (Dùng Selection để hiển thị sao/radio button)
+    # Quy ước: '0' là chưa đánh giá, '1'-'5' là điểm
+    RATING_SELECTION = [
+        ('0', 'Không ý kiến'),
+        ('1', 'Rất tệ'),
+        ('2', 'Tệ'),
         ('3', 'Bình thường'),
-        ('4', 'Hài lòng'),
-        ('5', 'Rất hài lòng')
-    ], string='Đánh giá chung', tracking=True)
+        ('4', 'Tốt'),
+        ('5', 'Xuất sắc'),
+    ]
+
+    overall_rating = fields.Selection(RATING_SELECTION, string='Đánh giá chung', default='3', required=True, tracking=True)
+    content_rating = fields.Selection(RATING_SELECTION, string='Nội dung bài học', default='3')
+    trainer_rating = fields.Selection(RATING_SELECTION, string='Giảng viên/Hướng dẫn', default='3')
+    material_rating = fields.Selection(RATING_SELECTION, string='Tài liệu/Hệ thống', default='3')
+    organization_rating = fields.Selection(RATING_SELECTION, string='Công tác tổ chức', default='3')
     
-    content_rating = fields.Integer(string='Nội dung (1-5)', default=3)
-    trainer_rating = fields.Integer(string='Giảng viên (1-5)', default=3)
-    material_rating = fields.Integer(string='Tài liệu (1-5)', default=3)
-    organization_rating = fields.Integer(string='Tổ chức (1-5)', default=3)
-    
-    comments = fields.Text(string='Nhận xét')
+    comments = fields.Text(string='Nhận xét chi tiết')
     suggestions = fields.Text(string='Đề xuất cải tiến')
     
-    feedback_date = fields.Date(string='Ngày phản hồi', default=fields.Date.today)
+    feedback_date = fields.Date(string='Ngày gửi', default=fields.Date.today, readonly=True)
+    
     state = fields.Selection([
         ('draft', 'Nháp'),
         ('submitted', 'Đã gửi'),
-        ('reviewed', 'Đã xem xét')
+        ('cancel', 'Hủy')
     ], string='Trạng thái', default='draft', required=True, tracking=True)
     
     company_id = fields.Many2one('res.company', string='Công ty', default=lambda self: self.env.company)
     
-    # Các field khác sẽ được bổ sung trong Tính năng 12
+    # Ràng buộc: Một lần đăng ký học chỉ có 1 feedback
+    _sql_constraints = [
+        ('enrollment_uniq', 'unique(enrollment_id)', 'Bạn đã gửi đánh giá cho khóa học này rồi!'),
+    ]
+
+    def action_submit(self):
+        """Học viên gửi đánh giá"""
+        self.ensure_one()
+        self.write({
+            'state': 'submitted',
+            'feedback_date': fields.Date.today()
+        })
     
-    @api.depends('employee_id', 'course_id')
-    def _compute_name(self):
-        for record in self:
-            if record.employee_id and record.course_id:
-                record.name = f"Feedback - {record.employee_id.name} - {record.course_id.name}"
-            else:
-                record.name = "Feedback mới"
+    def action_cancel(self):
+        self.write({'state': 'cancel'})

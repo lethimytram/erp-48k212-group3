@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Training Reminder Form View -->
+
     <record id="view_training_reminder_form" model="ir.ui.view">
         <field name="name">training.reminder.form</field>
         <field name="model">training.reminder</field>
@@ -22,40 +22,32 @@
                             <field name="reminder_type"/>
                             <field name="session_id" invisible="reminder_type != 'session'"/>
                             <field name="enrollment_id" invisible="reminder_type != 'enrollment'"/>
-                            <!-- Tạm tắt: <field name="test_id" invisible="reminder_type != 'test'"/> -->
+                            <field name="exam_id" invisible="reminder_type != 'exam'"/>
                             <field name="reminder_date"/>
                             <field name="sent_date" readonly="1"/>
                         </group>
                         <group>
-                            <field name="send_email"/>
-                            <field name="send_notification"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="send_notification" widget="boolean_toggle"/>
+                            <field name="company_id" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Người nhận">
                             <group>
-                                <field name="recipient_ids" widget="many2many_tags"/>
-                                <field name="employee_ids" widget="many2many_tags"/>
+                                <field name="recipient_ids" widget="many2many_tags" placeholder="Chọn đối tác..."/>
+                                <field name="employee_ids" widget="many2many_tags" placeholder="Chọn nhân viên..."/>
                             </group>
                         </page>
                         <page string="Nội dung">
-                            <field name="message" widget="html"/>
-                        </page>
-                        <page string="Ghi chú">
-                            <field name="notes" placeholder="Ghi chú thêm..."/>
+                            <field name="message" widget="html" placeholder="Nội dung thông báo hiển thị trên hệ thống..."/>
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="message_ids"/>
-                </div>
+                <chatter/>
             </form>
         </field>
     </record>
 
-    <!-- Training Reminder List View -->
     <record id="view_training_reminder_list" model="ir.ui.view">
         <field name="name">training.reminder.list</field>
         <field name="model">training.reminder</field>
@@ -64,36 +56,13 @@
                 <field name="name"/>
                 <field name="reminder_type"/>
                 <field name="reminder_date"/>
-                <field name="sent_date"/>
-                <field name="state"/>
+                <field name="send_notification" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'sent'"/>
                 <button name="action_send_reminder" string="Gửi" type="object" icon="fa-paper-plane" invisible="state != 'pending'"/>
             </list>
         </field>
     </record>
 
-    <!-- Training Reminder Search View -->
-    <record id="view_training_reminder_search" model="ir.ui.view">
-        <field name="name">training.reminder.search</field>
-        <field name="model">training.reminder</field>
-        <field name="arch" type="xml">
-            <search string="Tìm kiếm nhắc nhở">
-                <field name="name"/>
-                <field name="reminder_type"/>
-                <field name="session_id"/>
-                <field name="employee_ids"/>
-                <filter string="Chờ gửi" name="pending" domain="[('state','=','pending')]"/>
-                <filter string="Đã gửi" name="sent" domain="[('state','=','sent')]"/>
-                <filter string="Hôm nay" name="today" domain="[('reminder_date','&gt;=',datetime.datetime.now().replace(hour=0,minute=0,second=0)), ('reminder_date','&lt;=',datetime.datetime.now().replace(hour=23,minute=59,second=59))]"/>
-                <group expand="0" string="Nhóm theo">
-                    <filter string="Loại" name="group_type" context="{'group_by':'reminder_type'}"/>
-                    <filter string="Trạng thái" name="group_state" context="{'group_by':'state'}"/>
-                    <filter string="Ngày nhắc nhở" name="group_date" context="{'group_by':'reminder_date'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
-    <!-- Training Reminder Template Form View -->
     <record id="view_training_reminder_template_form" model="ir.ui.view">
         <field name="name">training.reminder.template.form</field>
         <field name="model">training.reminder.template</field>
@@ -105,81 +74,44 @@
                     </div>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" placeholder="Tên mẫu nhắc nhở..."/>
+                            <field name="name" placeholder="Ví dụ: Nhắc nhở trước buổi học 1 ngày"/>
                         </h1>
                     </div>
                     <group>
                         <group>
                             <field name="reminder_type"/>
-                            <field name="days_before"/>
+                            <label for="days_before" string="Thời gian"/>
+                            <div class="o_row">
+                                <field name="days_before"/>
+                                <span>ngày</span>
+                            </div>
                         </group>
                         <group>
-                            <field name="send_email"/>
-                            <field name="send_notification"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="send_notification" widget="boolean_toggle"/>
                         </group>
                     </group>
-                    <group>
-                        <field name="subject" placeholder="Tiêu đề email..."/>
-                    </group>
-                    <group>
-                        <label for="message_template" string="Mẫu nội dung"/>
-                        <div>
-                            <p class="text-muted">
-                                Có thể sử dụng các biến: {session_name}, {course_name}, {date}, {location}
-                            </p>
-                            <field name="message_template" widget="html" placeholder="Nội dung nhắc nhở..."/>
+                    <group string="Nội dung mẫu">
+                        <div class="text-muted mb-2">
+                            Các biến hỗ trợ: {name}, {course}, {date}, {location}
                         </div>
+                        <field name="message_template" widget="html" nolabel="1"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
-    <!-- Training Reminder Template List View -->
-    <record id="view_training_reminder_template_list" model="ir.ui.view">
-        <field name="name">training.reminder.template.list</field>
-        <field name="model">training.reminder.template</field>
-        <field name="arch" type="xml">
-            <list string="Mẫu nhắc nhở">
-                <field name="name"/>
-                <field name="reminder_type"/>
-                <field name="days_before"/>
-                <field name="send_email" widget="boolean_toggle"/>
-                <field name="send_notification" widget="boolean_toggle"/>
-                <field name="active" widget="boolean_toggle"/>
-            </list>
-        </field>
-    </record>
-
-    <!-- Actions -->
     <record id="action_training_reminder" model="ir.actions.act_window">
         <field name="name">Nhắc nhở</field>
         <field name="res_model">training.reminder</field>
         <field name="view_mode">list,form</field>
         <field name="context">{'search_default_pending': 1}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Chưa có nhắc nhở nào
-            </p>
-            <p>
-                Các nhắc nhở sẽ được tạo tự động khi tạo buổi học, đăng ký khóa học hoặc bài kiểm tra.
-            </p>
-        </field>
     </record>
 
     <record id="action_training_reminder_template" model="ir.actions.act_window">
-        <field name="name">Mẫu nhắc nhở</field>
+        <field name="name">Cấu hình mẫu nhắc nhở</field>
         <field name="res_model">training.reminder.template</field>
         <field name="view_mode">list,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Tạo mẫu nhắc nhở đầu tiên
-            </p>
-            <p>
-                Mẫu nhắc nhở sẽ được sử dụng để tự động tạo nhắc nhở cho buổi học, đăng ký và kiểm tra.
-            </p>
-        </field>
     </record>
 
 </odoo>

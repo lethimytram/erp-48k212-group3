@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_training_certificate_revoke_wizard_form" model="ir.ui.view">
+        <field name="name">training.certificate.revoke.wizard.form</field>
+        <field name="model">training.certificate.revoke.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Xác nhận Thu hồi Chứng chỉ">
+                <sheet>
+                    <div class="alert alert-danger" role="alert" style="margin-bottom: 20px;">
+                        <i class="fa fa-exclamation-triangle"/>
+                        <strong> Cảnh báo:</strong> Hành động này sẽ hủy bỏ hiệu lực của chứng chỉ ngay lập tức và không thể hoàn tác.
+                    </div>
+
+                    <group>
+                        <field name="certificate_id" readonly="1" options="{'no_open': True}"/>
+                    </group>
+
+                    <group>
+                        <field name="revoke_reason" placeholder="Ví dụ: Nhân viên nghỉ việc, Vi phạm kỷ luật nghiêm trọng... (Bắt buộc nhập trên 10 ký tự)"/>
+                    </group>
+                </sheet>
+
+                <footer>
+                    <button name="action_confirm_revoke" string="Xác nhận Thu hồi" type="object" class="btn-danger" data-hotkey="q"/>
+                    <button string="Hủy bỏ" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_training_certificate_revoke_wizard" model="ir.actions.act_window">
+        <field name="name">Thu hồi chứng chỉ</field>
+        <field name="res_model">training.certificate.revoke.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
