@@ -31,16 +31,6 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,learning,completed"/>
                 </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_start_exam" type="object" class="oe_stat_button" icon="fa-file-text" invisible="theory_state not in ['exam_ready', 'failed']">
-                            <div class="o_field_widget o_stat_info">
-                                <span class="o_stat_value">
-                                    <field name="best_exam_score" widget="float"/>
-%</span>
-                                <span class="o_stat_text">Thi lý thuyết</span>
-                            </div>
-                        </button>
-                    </div>
                     <widget name="web_ribbon" title="Hoàn thành" bg_color="text-bg-success" invisible="state != 'completed'"/>
                     <div class="oe_title">
                         <h1>
@@ -118,7 +108,6 @@
                         </page>
                     </notebook>
                 </sheet>
-                <chatter/>
             </form>
         </field>
     </record>
@@ -198,7 +187,7 @@
     <record id="action_my_enrollments" model="ir.actions.act_window">
         <field name="name">Khóa học của tôi</field>
         <field name="res_model">training.enrollment</field>
-        <field name="view_mode">kanban,list,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[("employee_id.user_id", "=", uid)]</field>
         <field name="context">{}</field>
         <field name="help" type="html">

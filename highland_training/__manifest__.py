@@ -25,6 +25,7 @@
         
         # Views - Admin
         'views/course_views.xml',
+        'views/content_views.xml',
         'views/question_views.xml',
         'views/checklist_views.xml',
         'views/training_request_views.xml',
@@ -33,6 +34,7 @@
         'views/exam_views.xml',
         'views/certificate_views.xml',
         'views/report_views.xml',
+        'views/plan_enroll_wizard_views.xml',
         
         # Views - Manager
         'views/manager_views.xml',

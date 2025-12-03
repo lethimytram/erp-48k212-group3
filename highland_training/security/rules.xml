@@ -57,6 +57,18 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
+    <!-- Admin: All Practice Records -->
+    <record id="rule_practice_admin" model="ir.rule">
+        <field name="name">Admin: All Practice</field>
+        <field name="model_id" ref="model_training_practice"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_training_admin'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
     <!-- Record Rules: Admin - xem tất cả -->
     <record id="rule_all_admin" model="ir.rule">
         <field name="name">Admin: All Records</field>

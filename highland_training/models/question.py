@@ -8,7 +8,7 @@ class TrainingQuestion(models.Model):
 
     name = fields.Char('Câu hỏi', required=True)
     course_id = fields.Many2one('training.course', string='Khóa học', required=True, ondelete='cascade')
-    sequence = fields.Integer('Thứ tự', default=10)
+    sequence = fields.Integer('Thứ tự', default=1)
     
     question_type = fields.Selection([
         ('single', 'Một đáp án đúng'),

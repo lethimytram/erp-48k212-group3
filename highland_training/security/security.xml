@@ -7,22 +7,22 @@
         <field name="sequence">20</field>
     </record>
 
-    <!-- Group: Nhân viên (Employee) -->
+    <!-- Group: Nhân viên (Employee) - Không kế thừa từ Manager -->
     <record id="group_training_employee" model="res.groups">
         <field name="name">Highland Training / Nhân viên</field>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
-    <!-- Group: Quản lý cửa hàng (Store Manager) -->
+    <!-- Group: Quản lý cửa hàng (Store Manager) - Không kế thừa từ Admin -->
     <record id="group_training_manager" model="res.groups">
         <field name="name">Highland Training / Quản lý cửa hàng</field>
-        <field name="implied_ids" eval="[(4, ref('group_training_employee'))]"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
-    <!-- Group: Admin (Head Office)-->
+    <!-- Group: Admin (Head Office) -->
     <record id="group_training_admin" model="res.groups">
         <field name="name">Highland Training / Quản trị viên</field>
-        <field name="implied_ids" eval="[(4, ref('group_training_manager'))]"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
     </record>
 
 </odoo>

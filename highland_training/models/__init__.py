@@ -9,3 +9,4 @@ from . import enrollment
 from . import exam
 from . import practice
 from . import certificate
+from . import plan_enroll_wizard

@@ -125,9 +125,29 @@ class TrainingExam(models.Model):
         # Cập nhật trạng thái enrollment
         if self.is_passed:
             self.enrollment_id.theory_state = 'passed'
-            self.enrollment_id.practice_state = 'not_started'
+            self.enrollment_id.practice_state = 'in_progress'
+            
+            # Tự động tạo đánh giá thực hành
+            self._create_practice_assessment()
         else:
             self.enrollment_id.theory_state = 'failed'
+    
+    def _create_practice_assessment(self):
+        """Tự động tạo đánh giá thực hành khi đạt lý thuyết"""
+        self.ensure_one()
+        
+        if not self.enrollment_id.practice_ids:
+            # Chỉ tạo nếu chưa có đánh giá thực hành
+            # Lấy manager user_id từ employee
+            manager_employee = self.enrollment_id.manager_id
+            manager_user = manager_employee.user_id if manager_employee else None
+            
+            practice = self.env['training.practice'].create({
+                'enrollment_id': self.enrollment_id.id,
+                'course_id': self.course_id.id,
+                'assessor_id': manager_employee.id if manager_employee else self.env.user.employee_id.id,
+            })
+            return practice
     
     @api.depends('answer_ids.is_correct', 'answer_ids.question_id.points')
     def _compute_score(self):

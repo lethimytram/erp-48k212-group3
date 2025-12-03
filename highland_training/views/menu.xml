@@ -1,98 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Main Menu -->
+
     <menuitem id="menu_training_root" name="Đào tạo Highland" sequence="50" web_icon="highland_training,static/description/icon.png"/>
 
-    <!-- ========================================= -->
-    <!-- ADMIN MENU - Quản trị (10 Use Cases)     -->
-    <!-- ========================================= -->
-    <menuitem id="menu_training_admin" name="Quản trị" parent="menu_training_root" sequence="10" groups="group_training_admin"/>
+    <menuitem id="menu_courses_group" name="Khóa học" parent="menu_training_root" sequence="10" groups="group_training_admin,group_training_manager,group_training_employee"/>
 
-    <!-- Nhóm 1: Quản lý nội dung (UC01-04) -->
-    <menuitem id="menu_admin_content" name="Quản lý nội dung" parent="menu_training_admin" sequence="10"/>
+    <menuitem id="menu_training_course" name="Khóa học" parent="menu_courses_group" action="action_training_course" sequence="10" groups="group_training_admin"/>
 
-    <menuitem id="menu_training_course" name="Khóa học" parent="menu_admin_content" action="action_training_course" sequence="10"/>
-    <!-- UC01: Quản lý khóa học -->
-    <!-- UC02: Quản lý nội dung đào tạo (trong form khóa học) -->
+    <menuitem id="menu_training_question" name="Ngân hàng câu hỏi" parent="menu_courses_group" action="action_training_question" sequence="20" groups="group_training_admin"/>
 
-    <menuitem id="menu_training_question" name="Ngân hàng câu hỏi" parent="menu_admin_content" action="action_training_question" sequence="20"/>
-    <!-- UC03: Quản lý câu hỏi trắc nghiệm -->
+    <menuitem id="menu_training_checklist" name="Checklist thực hành" parent="menu_courses_group" action="action_training_checklist" sequence="30" groups="group_training_admin"/>
 
-    <menuitem id="menu_training_checklist" name="Checklist thực hành" parent="menu_admin_content" action="action_training_checklist" sequence="30"/>
-    <!-- UC04: Quản lý checklist thực hành -->
+    <menuitem id="menu_planning_group" name="Kế hoạch đào tạo" parent="menu_training_root" sequence="20" groups="group_training_admin,group_training_manager"/>
 
-    <!-- Nhóm 2: Kế hoạch đào tạo (UC05-08) -->
-    <menuitem id="menu_admin_planning" name="Kế hoạch đào tạo" parent="menu_training_admin" sequence="20"/>
+    <menuitem id="menu_training_request" name="Nhu cầu đào tạo" parent="menu_planning_group" action="action_training_request" sequence="10" groups="group_training_admin"/>
 
-    <menuitem id="menu_training_request" name="Nhu cầu đào tạo" parent="menu_admin_planning" action="action_training_request" sequence="10"/>
-    <!-- UC06: Duyệt yêu cầu đào tạo (Admin) -->
+    <menuitem id="menu_training_plan" name="Kế hoạch đào tạo" parent="menu_planning_group" action="action_training_plan" sequence="20" groups="group_training_admin"/>
 
-    <menuitem id="menu_training_plan" name="Kế hoạch theo quý" parent="menu_admin_planning" action="action_training_plan" sequence="20"/>
-    <!-- UC07: Lập kế hoạch đào tạo quý -->
-    <!-- UC08: Ghi danh học viên hàng loạt (button trong plan) -->
+    <menuitem id="menu_training_enrollment" name="Ghi danh học viên" parent="menu_planning_group" action="action_training_enrollment" sequence="30" groups="group_training_admin"/>
 
-    <menuitem id="menu_training_enrollment" name="Quản lý học viên" parent="menu_admin_planning" action="action_training_enrollment" sequence="30"/>
-    <!-- UC09: Xem/Quản lý enrollment -->
+    <menuitem id="menu_assessment_group" name="Kiểm tra &amp; Đánh giá" parent="menu_training_root" sequence="30" groups="group_training_admin,group_training_manager,group_training_employee"/>
 
-    <!-- Nhóm 4: Đánh giá (UC13-15) -->
-    <menuitem id="menu_admin_assessment" name="Đánh giá &amp; Thi" parent="menu_training_admin" sequence="30"/>
+    <menuitem id="menu_admin_exam" name="Kết quả thi" parent="menu_assessment_group" action="action_training_exam" sequence="10" groups="group_training_admin"/>
 
-    <menuitem id="menu_admin_practice" name="Đánh giá thực hành" parent="menu_admin_assessment" action="action_manager_practice_assessment" sequence="10"/>
-    <!-- UC13: Đánh giá thực hành nhân viên -->
-    <!-- UC14: Chấm checklist thực hành -->
-    <!-- UC15: Đánh giá lại -->
+    <menuitem id="menu_admin_practice" name="Đánh giá thực hành" parent="menu_assessment_group" action="action_manager_practice_assessment" sequence="30" groups="group_training_admin,group_training_manager"/>
 
-    <menuitem id="menu_admin_exam" name="Kết quả thi" parent="menu_admin_assessment" action="action_training_exam" sequence="20"/>
-    <!-- UC11: Xem kết quả thi lý thuyết -->
+    <menuitem id="menu_certificates_group" name="Chứng nhận" parent="menu_training_root" sequence="40" groups="group_training_admin"/>
 
-    <!-- Nhóm 5: Chứng nhận & Báo cáo (UC16-21) -->
-    <menuitem id="menu_admin_reports" name="Báo cáo &amp; Chứng nhận" parent="menu_training_admin" sequence="40"/>
+    <menuitem id="menu_training_certificate" name="Quản lý chứng nhận" parent="menu_certificates_group" action="action_training_certificate" sequence="10" groups="group_training_admin"/>
 
-    <menuitem id="menu_training_certificate" name="Chứng nhận" parent="menu_admin_reports" action="action_training_certificate" sequence="10"/>
-    <!-- UC18: Quản lý chứng nhận -->
+    <menuitem id="menu_employee_my_certificates" name="Chứng nhận của tôi" parent="menu_certificates_group" action="action_my_certificates" sequence="20" groups="group_training_employee"/>
 
-    <menuitem id="menu_training_report" name="Báo cáo tổng quan" parent="menu_admin_reports" action="action_training_report" sequence="20"/>
-    <!-- UC19: Xem báo cáo tổng quan -->
-    <!-- UC21: Theo dõi tiến độ (Admin view all) -->
+    <menuitem id="menu_reports_group" name="Báo cáo" parent="menu_training_root" sequence="50" groups="group_training_admin,group_training_manager"/>
 
-    <!-- ========================================= -->
-    <!-- MANAGER MENU - Quản lý cửa hàng (6 UC)   -->
-    <!-- ========================================= -->
-    <menuitem id="menu_training_manager" name="Quản lý cửa hàng" parent="menu_training_root" sequence="20" groups="group_training_manager"/>
+    <menuitem id="menu_training_report" name="Báo cáo tổng hợp" parent="menu_reports_group" action="action_training_report" sequence="10" groups="group_training_admin"/>
 
-    <menuitem id="menu_manager_my_requests" name="Yêu cầu của tôi" parent="menu_training_manager" action="action_my_training_requests" sequence="10"/>
-    <!-- UC05: Tạo yêu cầu đào tạo (Manager) -->
+    <menuitem id="menu_employee_portal" name="Nhân viên" parent="menu_training_root" sequence="60" groups="group_training_employee"/>
 
-    <menuitem id="menu_manager_my_store" name="Nhân viên của tôi" parent="menu_training_manager" action="action_manager_my_store_enrollments" sequence="20"/>
-    <!-- UC21: Theo dõi tiến độ (Manager view team) -->
+    <menuitem id="menu_employee_my_enrollments" name="Khóa học của tôi" parent="menu_employee_portal" action="action_my_enrollments" sequence="10" groups="group_training_employee"/>
 
-    <menuitem id="menu_manager_practice" name="Đánh giá thực hành" parent="menu_training_manager" action="action_manager_practice_assessment" sequence="30"/>
-    <!-- UC13: Đánh giá thực hành nhân viên -->
-    <!-- UC14: Chấm checklist thực hành -->
-    <!-- UC15: Đánh giá lại -->
+    <menuitem id="menu_employee_my_exams" name="Bài thi" parent="menu_employee_portal" action="action_my_exams" sequence="20" groups="group_training_employee"/>
 
-    <menuitem id="menu_manager_courses" name="Danh sách khóa học" parent="menu_training_manager" action="action_training_course" sequence="40"/>
-    <!-- Xem khóa học (read-only) -->
-
-    <menuitem id="menu_manager_report" name="Báo cáo team" parent="menu_training_manager" action="action_manager_report" sequence="50"/>
-    <!-- UC20: Xem báo cáo team -->
-
-    <!-- ========================================= -->
-    <!-- EMPLOYEE MENU - Học viên (5 Use Cases)   -->
-    <!-- ========================================= -->
-    <menuitem id="menu_training_employee" name="Học viên" parent="menu_training_root" sequence="30" groups="group_training_employee"/>
-
-    <menuitem id="menu_employee_my_courses" name="Khóa học của tôi" parent="menu_training_employee" action="action_my_enrollments" sequence="10"/>
-    <!-- UC09: Xem khóa học được gán -->
-    <!-- UC10: Học nội dung đào tạo (trong enrollment form) -->
-    <!-- UC21: Theo dõi tiến độ (Employee view self) -->
-
-    <menuitem id="menu_employee_my_exams" name="Bài thi của tôi" parent="menu_training_employee" action="action_my_exams" sequence="20"/>
-    <!-- UC11: Làm bài thi lý thuyết -->
-    <!-- UC12: Thi lại -->
-
-    <menuitem id="menu_employee_my_certificates" name="Chứng nhận của tôi" parent="menu_training_employee" action="action_my_certificates" sequence="30"/>
-    <!-- UC16: Xem chứng nhận -->
-    <!-- UC17: Tải chứng nhận PDF -->
+    <menuitem id="menu_employee_my_certificates" name="Chứng nhận của tôi" parent="menu_employee_portal" action="action_my_certificates" sequence="30" groups="group_training_employee"/>
 
 </odoo>

@@ -40,6 +40,32 @@ class TrainingPractice(models.Model):
     
     notes = fields.Text('Nhận xét')
     
+    @api.model
+    def create_for_passed_enrollments(self):
+        """Tạo practice assessment cho các enrollment đã đạt lý thuyết nhưng chưa có practice"""
+        # Tìm các enrollment đã đạt lý thuyết nhưng chưa có practice
+        enrollments = self.env['training.enrollment'].search([
+            ('theory_state', '=', 'passed'),
+            ('practice_ids', '=', False),  # Chưa có practice assessment
+        ])
+        
+        created_count = 0
+        for enrollment in enrollments:
+            try:
+                # Tạo practice assessment
+                self.create({
+                    'enrollment_id': enrollment.id,
+                    'course_id': enrollment.course_id.id,
+                    'assessor_id': enrollment.manager_id.id if enrollment.manager_id else False,
+                })
+                created_count += 1
+                enrollment.practice_state = 'in_progress'
+            except Exception as e:
+                # Log lỗi nhưng không dừng lại
+                continue
+        
+        return created_count
+    
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -104,6 +130,7 @@ class TrainingPractice(models.Model):
         # Cập nhật trạng thái enrollment
         if self.is_passed:
             self.enrollment_id.practice_state = 'passed'
+            # Kiểm tra và tạo certificate nếu cả lý thuyết và thực hành đều đạt
             self.enrollment_id.action_check_completion()
         else:
             self.enrollment_id.practice_state = 'failed'

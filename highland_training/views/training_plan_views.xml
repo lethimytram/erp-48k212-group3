@@ -54,24 +54,6 @@
                                 </list>
                             </field>
                         </page>
-                        <page string="Nhân viên">
-                            <field name="employee_ids" readonly="state != 'draft'">
-                                <list>
-                                    <field name="name"/>
-                                    <field name="department_id"/>
-                                    <field name="job_id"/>
-                                </list>
-                            </field>
-                        </page>
-                        <page string="Phòng ban/Cửa hàng">
-                            <field name="department_ids" readonly="state != 'draft'">
-                                <list>
-                                    <field name="name"/>
-                                    <field name="manager_id"/>
-                                    <field name="parent_id"/>
-                                </list>
-                            </field>
-                        </page>
                         <page string="Danh sách ghi danh">
                             <field name="enrollment_ids" readonly="1">
                                 <list>

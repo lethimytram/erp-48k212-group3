@@ -17,9 +17,33 @@
         <field name="name">report.enrollment.graph</field>
         <field name="model">training.enrollment</field>
         <field name="arch" type="xml">
-            <graph string="Thống kê đào tạo" type="bar" stacked="True">
-                <field name="course_id"/>
-                <field name="state" type="col"/>
+            <graph string="Thống kê học viên đạt/không đạt" type="pie">
+                <field name="state"/>
+                <field name="employee_id" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Theory Pass/Fail Statistics -->
+    <record id="view_report_theory_pass_fail" model="ir.ui.view">
+        <field name="name">report.theory.pass.fail</field>
+        <field name="model">training.enrollment</field>
+        <field name="arch" type="xml">
+            <graph string="Kết quả lý thuyết (Đạt/Không đạt)" type="pie">
+                <field name="theory_state"/>
+                <field name="employee_id" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Practice Pass/Fail Statistics -->
+    <record id="view_report_practice_pass_fail" model="ir.ui.view">
+        <field name="name">report.practice.pass.fail</field>
+        <field name="model">training.enrollment</field>
+        <field name="arch" type="xml">
+            <graph string="Kết quả thực hành (Đạt/Không đạt)" type="pie">
+                <field name="practice_state"/>
+                <field name="employee_id" type="measure"/>
             </graph>
         </field>
     </record>
@@ -29,6 +53,7 @@
         <field name="name">Báo cáo tổng quan</field>
         <field name="res_model">training.enrollment</field>
         <field name="view_mode">pivot,graph</field>
+        <field name="views">[(ref('view_report_enrollment_course'), 'pivot'), (ref('view_report_theory_pass_fail'), 'graph'), (ref('view_report_practice_pass_fail'), 'graph'), (ref('view_report_enrollment_graph'), 'graph')]</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -41,8 +66,9 @@
     <record id="action_manager_report" model="ir.actions.act_window">
         <field name="name">Báo cáo team</field>
         <field name="res_model">training.enrollment</field>
-        <field name="view_mode">pivot,graph</field>
+        <field name="view_mode">graph,pivot</field>
         <field name="domain">[("employee_id.parent_id.user_id", "=", uid)]</field>
+        <field name="views">[(ref('view_report_theory_pass_fail'), 'graph'), (ref('view_report_practice_pass_fail'), 'graph'), (ref('view_report_enrollment_graph'), 'graph'), (False, 'pivot')]</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
