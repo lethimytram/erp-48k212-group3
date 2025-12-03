@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Question Form View -->
+    <record id="view_training_question_form" model="ir.ui.view">
+        <field name="name">training.question.form</field>
+        <field name="model">training.question</field>
+        <field name="arch" type="xml">
+            <form string="Câu hỏi">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="course_id"/>
+                            <field name="question_type"/>
+                            <field name="points"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="name" placeholder="Nội dung câu hỏi..."/>
+                    </group>
+                    <group string="Đáp án">
+                        <field name="answer_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="is_correct" widget="boolean_toggle"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="explanation" placeholder="Giải thích đáp án..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Question Tree View -->
+    <record id="view_training_question_tree" model="ir.ui.view">
+        <field name="name">training.question.tree</field>
+        <field name="model">training.question</field>
+        <field name="arch" type="xml">
+            <list string="Ngân hàng câu hỏi">
+                <field name="sequence" widget="handle"/>
+                <field name="course_id"/>
+                <field name="name"/>
+                <field name="question_type"/>
+                <field name="points"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Question Action -->
+    <record id="action_training_question" model="ir.actions.act_window">
+        <field name="name">Ngân hàng câu hỏi</field>
+        <field name="res_model">training.question</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

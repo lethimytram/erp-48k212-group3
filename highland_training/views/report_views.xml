@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Report: Enrollment by Course -->
+    <record id="view_report_enrollment_course" model="ir.ui.view">
+        <field name="name">report.enrollment.course</field>
+        <field name="model">training.enrollment</field>
+        <field name="arch" type="xml">
+            <pivot string="Báo cáo theo khóa học">
+                <field name="course_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="employee_id" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_enrollment_graph" model="ir.ui.view">
+        <field name="name">report.enrollment.graph</field>
+        <field name="model">training.enrollment</field>
+        <field name="arch" type="xml">
+            <graph string="Thống kê đào tạo" type="bar" stacked="True">
+                <field name="course_id"/>
+                <field name="state" type="col"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Admin Report Action -->
+    <record id="action_training_report" model="ir.actions.act_window">
+        <field name="name">Báo cáo tổng quan</field>
+        <field name="res_model">training.enrollment</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có dữ liệu để hiển thị báo cáo
+            </p>
+        </field>
+    </record>
+
+    <!-- Manager Report Action -->
+    <record id="action_manager_report" model="ir.actions.act_window">
+        <field name="name">Báo cáo team</field>
+        <field name="res_model">training.enrollment</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="domain">[("employee_id.parent_id.user_id", "=", uid)]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có dữ liệu đào tạo cho team của bạn
+            </p>
+        </field>
+    </record>
+
+</odoo>
