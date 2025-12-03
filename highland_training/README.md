@@ -23,10 +23,9 @@ Hệ thống quản lý đào tạo nội bộ Highland theo mô hình Blended L
 
 ### Dành cho Nhân viên
 
-- **Portal học tập**: Truy cập khóa học trên thiết bị di động
 - **Học trực tuyến**: Xem video, tài liệu đào tạo
 - **Thi lý thuyết**: Làm bài thi trắc nghiệm tự động chấm điểm
-- **Xem chứng nhận**: Theo dõi chứng chỉ đã đạt được
+- **Xem chứng nhận**: Theo dõi chứng nhận đã đạt được
 
 ## Quy trình nghiệp vụ
 
@@ -82,3 +81,4 @@ Liên hệ: IT Department - Highland Coffee
 ---
 
 © 2024 Highland Coffee Vietnam
+
