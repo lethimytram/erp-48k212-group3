@@ -1,2 +1,3 @@
-MODULE ĐÀO TẠO NỘI BỘ TRÊN ODOO
-THỰC HÀNH ERP - NHÓM 3
+## MODULE ĐÀO TẠO NỘI BỘ TRÊN ODOO
+
+## THỰC HÀNH ERP - NHÓM 3
