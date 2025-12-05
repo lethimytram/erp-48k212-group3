@@ -14,7 +14,7 @@
                 <field name="question_count"/>
                 <field name="checklist_count"/>
                 <field name="enrollment_count"/>
-                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'active'" decoration-muted="state == 'archived'"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'need_planning'" decoration-success="state == 'active'" decoration-muted="state == 'archived'"/>
             </list>
         </field>
     </record>
@@ -28,7 +28,7 @@
                 <header>
                     <button name="action_activate" string="Kích hoạt" type="object" invisible="state == 'active'" class="oe_highlight"/>
                     <button name="action_archive_course" string="Lưu trữ" type="object" invisible="state == 'archived'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,active"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,need_planning,active"/>
                 </header>
                 <sheet>
                     <widget name="web_ribbon" title="Lưu trữ" bg_color="text-bg-danger" invisible="state != 'archived'"/>
@@ -51,6 +51,46 @@
                     <notebook>
                         <page string="Nội dung đào tạo" name="content">
                             <field name="content_ids">
+                                <form string="Nội dung">
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="name"/>
+                                                <field name="content_type"/>
+                                                <field name="sequence"/>
+                                            </group>
+                                            <group>
+                                                <field name="duration"/>
+                                            </group>
+                                        </group>
+
+                                        <!-- Video URL -->
+                                        <group string="Video" invisible="content_type != 'video'">
+                                            <field name="video_url" placeholder="https://youtube.com/watch?v=..."/>
+                                        </group>
+
+                                        <!-- Upload Files -->
+                                        <group string="📎 Tài liệu đính kèm">
+                                            <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+                                        </group>
+
+                                        <!-- Recipe Fields -->
+                                        <group string="🍲 Công thức pha chế" invisible="content_type != 'recipe'">
+                                            <group>
+                                                <field name="recipe_ingredients" placeholder="Ví dụ:\n- Espresso: 30ml\n- Sữa: 200ml\n- Đường: 10g" nolabel="1"/>
+                                            </group>
+                                        </group>
+
+                                        <group invisible="content_type != 'recipe'">
+                                            <field name="recipe_steps" widget="html" placeholder="Các bước thực hiện..." nolabel="1"/>
+                                        </group>
+
+                                        <!-- Description -->
+                                        <group string="📝 Mô tả chi tiết">
+                                            <field name="description" widget="html" placeholder="Mô tả nội dung..." nolabel="1"/>
+                                        </group>
+                                    </sheet>
+                                </form>
                                 <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
@@ -76,6 +116,16 @@
                                     <field name="name"/>
                                     <field name="category"/>
                                     <field name="is_required"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Nhân viên cần học" name="employees">
+                            <field name="employee_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="department_id"/>
+                                    <field name="job_id"/>
+                                    <field name="work_email"/>
                                 </list>
                             </field>
                         </page>
@@ -110,8 +160,9 @@
                 <field name="code"/>
                 <field name="course_type"/>
                 <field name="job_position_ids"/>
-                <filter string="Đang hoạt động" name="active" domain="[('state', '=', 'active')]"/>
                 <filter string="Nháp" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Cần lập kế hoạch" name="need_planning" domain="[('state', '=', 'need_planning')]"/>
+                <filter string="Đang hoạt động" name="active" domain="[('state', '=', 'active')]"/>
                 <filter string="Lưu trữ" name="archived" domain="[('state', '=', 'archived')]"/>
                 <group expand="0" string="Nhóm theo">
                     <filter string="Loại khóa học" name="group_type" context="{'group_by': 'course_type'}"/>
@@ -126,7 +177,7 @@
         <field name="name">Khóa học</field>
         <field name="res_model">training.course</field>
         <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_active': 1}</field>
+        <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Tạo khóa học đào tạo mới

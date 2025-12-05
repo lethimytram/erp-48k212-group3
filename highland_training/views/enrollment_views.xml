@@ -67,13 +67,11 @@
                             </group>
                         </page>
                         <page string="Nội dung học tập" name="content">
-                            <group string="📖 Tài liệu khóa học">
+                            <group string="📖 Khóa học">
                                 <field name="course_id" readonly="1" options="{'no_open': True}"/>
                             </group>
-                            <separator string="Danh sách nội dung"/>
-                            <group>
-                                <p class="text-muted">Vui lòng xem chi tiết khóa học để truy cập nội dung học tập (video, tài liệu, công thức pha chế)</p>
-                            </group>
+                            <separator string="📚 Danh sách nội dung học tập"/>
+                            <field name="course_content_ids" nolabel="1" readonly="1"/>
                         </page>
                         <page string="Bài thi" name="exams">
                             <field name="exam_ids">

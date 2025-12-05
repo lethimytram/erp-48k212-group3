@@ -31,6 +31,7 @@
                         <group>
                             <field name="name" readonly="1"/>
                             <field name="store_manager_id" readonly="state != 'draft'"/>
+                            <field name="course_selection_type" widget="radio" readonly="state != 'draft'"/>
                         </group>
                         <group>
                             <field name="state" invisible="1"/>
@@ -39,8 +40,8 @@
                     <group>
                         <field name="course_ids" widget="many2many_tags" readonly="state != 'draft'"/>
                     </group>
-                    <group>
-                        <field name="employee_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                    <group invisible="course_selection_type != 'existing'">
+                        <field name="employee_ids" widget="many2many_tags" readonly="state != 'draft'" required="course_selection_type == 'existing'"/>
                     </group>
                     <group>
                         <field name="reason" readonly="state != 'draft'"/>

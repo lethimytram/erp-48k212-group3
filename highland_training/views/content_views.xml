@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Training Content Tree View -->
+    <record id="view_training_content_tree" model="ir.ui.view">
+        <field name="name">training.content.tree</field>
+        <field name="model">training.content</field>
+        <field name="arch" type="xml">
+            <list decoration-primary="content_type == 'video'" decoration-info="content_type == 'document'" decoration-warning="content_type == 'recipe'">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="content_type"/>
+                <field name="duration" widget="integer"/>
+            </list>
+        </field>
+    </record>
+
     <!-- Training Content Form View -->
     <record id="view_training_content_form" model="ir.ui.view">
         <field name="name">training.content.form</field>

@@ -22,6 +22,7 @@
         
         # Data
         'data/sequence.xml',
+        'data/default_user_access.xml',
         
         # Views - Admin
         'views/course_views.xml',
@@ -48,12 +49,6 @@
     'demo': [
         'data/demo_data.xml',
     ],
-    'assets': {
-        'web.assets_frontend': [
-            'highland_training/static/src/css/portal.css',
-            'highland_training/static/src/js/portal.js',
-        ],
-    },
     'installable': True,
     'application': True,
     'auto_install': False,

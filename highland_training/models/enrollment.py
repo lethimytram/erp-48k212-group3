@@ -58,6 +58,15 @@ class TrainingEnrollment(models.Model):
     # Chứng nhận
     certificate_id = fields.Many2one('training.certificate', string='Chứng chỉ', readonly=True)
     
+    # Nội dung khóa học (để hiển thị cho học viên)
+    course_content_ids = fields.Many2many('training.content', string='Nội dung học tập', 
+                                         compute='_compute_course_content_ids', readonly=True)
+    
+    @api.depends('course_id', 'course_id.content_ids')
+    def _compute_course_content_ids(self):
+        for record in self:
+            record.course_content_ids = record.course_id.content_ids if record.course_id else False
+    
     # Quản lý
     manager_id = fields.Many2one('hr.employee', string='Quản lý cửa hàng', compute='_compute_manager_id', store=True)
     notes = fields.Text('Ghi chú')

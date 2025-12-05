@@ -22,6 +22,7 @@ class TrainingCourse(models.Model):
     
     # Đối tượng học
     job_position_ids = fields.Many2many('hr.job', string='Vị trí công việc')
+    employee_ids = fields.Many2many('hr.employee', 'course_employee_rel', 'course_id', 'employee_id', string='Nhân viên cần học')
     
     # Nội dung
     content_ids = fields.One2many('training.content', 'course_id', string='Nội dung đào tạo')
@@ -46,6 +47,7 @@ class TrainingCourse(models.Model):
     # Trạng thái
     state = fields.Selection([
         ('draft', 'Nháp'),
+        ('need_planning', 'Cần lập kế hoạch'),
         ('active', 'Đang hoạt động'),
         ('archived', 'Lưu trữ'),
     ], string='Trạng thái', default='draft', tracking=True)
@@ -71,6 +73,7 @@ class TrainingCourse(models.Model):
         for rec in self:
             rec.checklist_count = len(rec.checklist_ids)
     
+    @api.depends()
     def _compute_enrollment_count(self):
         for rec in self:
             rec.enrollment_count = self.env['training.enrollment'].search_count([('course_id', '=', rec.id)])
