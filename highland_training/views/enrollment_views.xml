@@ -67,10 +67,10 @@
                             </group>
                         </page>
                         <page string="Nội dung học tập" name="content">
-                            <group string="📖 Khóa học">
+                            <group string="Khóa học">
                                 <field name="course_id" readonly="1" options="{'no_open': True}"/>
                             </group>
-                            <separator string="📚 Danh sách nội dung học tập"/>
+                            <separator string="Danh sách nội dung học tập"/>
                             <field name="course_content_ids" nolabel="1" readonly="1"/>
                         </page>
                         <page string="Bài thi" name="exams">

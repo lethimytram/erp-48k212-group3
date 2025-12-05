@@ -57,41 +57,35 @@
                                             <group>
                                                 <field name="name"/>
                                                 <field name="content_type"/>
-                                                <field name="sequence"/>
                                             </group>
                                             <group>
                                                 <field name="duration"/>
                                             </group>
                                         </group>
 
+                                        <!-- Upload Files -->
+                                        <group string="TÀI LIỆU &amp; FILE">
+                                            <field name="attachment_ids" widget="many2many_binary" string="Upload File"/>
+                                        </group>
+
                                         <!-- Video URL -->
-                                        <group string="Video" invisible="content_type != 'video'">
+                                        <group string="VIDEO" invisible="content_type != 'video'">
                                             <field name="video_url" placeholder="https://youtube.com/watch?v=..."/>
                                         </group>
 
-                                        <!-- Upload Files -->
-                                        <group string="📎 Tài liệu đính kèm">
-                                            <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
-                                        </group>
-
                                         <!-- Recipe Fields -->
-                                        <group string="🍲 Công thức pha chế" invisible="content_type != 'recipe'">
-                                            <group>
-                                                <field name="recipe_ingredients" placeholder="Ví dụ:\n- Espresso: 30ml\n- Sữa: 200ml\n- Đường: 10g" nolabel="1"/>
-                                            </group>
-                                        </group>
-
-                                        <group invisible="content_type != 'recipe'">
-                                            <field name="recipe_steps" widget="html" placeholder="Các bước thực hiện..." nolabel="1"/>
+                                        <group string="CÔNG THỨC PHA CHẾ" invisible="content_type != 'recipe'">
+                                            <field name="recipe_ingredients" placeholder="Ví dụ:&#10;- Espresso: 30ml&#10;- Sữa: 200ml&#10;- Đường: 10g"/>
+                                            <field name="recipe_steps" widget="html" placeholder="Các bước thực hiện..."/>
                                         </group>
 
                                         <!-- Description -->
-                                        <group string="📝 Mô tả chi tiết">
+                                        <group string="MÔ TẢ">
                                             <field name="description" widget="html" placeholder="Mô tả nội dung..." nolabel="1"/>
                                         </group>
                                     </sheet>
                                 </form>
-                                <list editable="bottom">
+                                <list>
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="content_type"/>

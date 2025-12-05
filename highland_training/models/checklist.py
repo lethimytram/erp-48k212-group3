@@ -8,7 +8,7 @@ class TrainingChecklist(models.Model):
 
     name = fields.Char('Tiêu chí đánh giá', required=True)
     course_id = fields.Many2one('training.course', string='Khóa học', required=True, ondelete='cascade')
-    sequence = fields.Integer('Thứ tự', default=10)
+    sequence = fields.Integer('Thứ tự', default=1)
     
     category = fields.Selection([
         ('recipe', 'Công thức & Định lượng'),
