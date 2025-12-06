@@ -3,44 +3,42 @@
 
     <menuitem id="menu_training_root" name="Đào tạo Highland" sequence="50" web_icon="highland_training,static/description/icon.png"/>
 
-    <menuitem id="menu_courses_group" name="Khóa học" parent="menu_training_root" sequence="10" groups="group_training_admin,group_training_manager,group_training_employee"/>
+    <menuitem id="menu_courses_group" name="Khóa học" parent="menu_training_root" sequence="10" groups="highland_training.group_training_admin,highland_training.group_training_manager,highland_training.group_training_employee"/>
 
-    <menuitem id="menu_training_course" name="Khóa học" parent="menu_courses_group" action="action_training_course" sequence="10" groups="group_training_admin"/>
+    <menuitem id="menu_training_course" name="Khóa học" parent="menu_courses_group" action="action_training_course" sequence="10" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_training_question" name="Ngân hàng câu hỏi" parent="menu_courses_group" action="action_training_question" sequence="20" groups="group_training_admin"/>
+    <menuitem id="menu_training_question" name="Ngân hàng câu hỏi" parent="menu_courses_group" action="action_training_question" sequence="20" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_training_checklist" name="Checklist thực hành" parent="menu_courses_group" action="action_training_checklist" sequence="30" groups="group_training_admin"/>
+    <menuitem id="menu_training_checklist" name="Checklist thực hành" parent="menu_courses_group" action="action_training_checklist" sequence="30" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_planning_group" name="Kế hoạch đào tạo" parent="menu_training_root" sequence="20" groups="group_training_admin,group_training_manager"/>
+    <menuitem id="menu_planning_group" name="Kế hoạch đào tạo" parent="menu_training_root" sequence="20" groups="highland_training.group_training_admin,highland_training.group_training_manager"/>
 
-    <menuitem id="menu_training_request" name="Nhu cầu đào tạo" parent="menu_planning_group" action="action_training_request" sequence="10" groups="group_training_admin"/>
+    <menuitem id="menu_training_request" name="Nhu cầu đào tạo" parent="menu_planning_group" action="action_training_request" sequence="10" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_training_plan" name="Kế hoạch đào tạo" parent="menu_planning_group" action="action_training_plan" sequence="20" groups="group_training_admin"/>
+    <menuitem id="menu_training_plan" name="Kế hoạch đào tạo" parent="menu_planning_group" action="action_training_plan" sequence="20" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_training_enrollment" name="Ghi danh học viên" parent="menu_planning_group" action="action_training_enrollment" sequence="30" groups="group_training_admin"/>
+    <menuitem id="menu_assessment_group" name="Kiểm tra &amp; Đánh giá" parent="menu_training_root" sequence="30" groups="highland_training.group_training_admin,highland_training.group_training_manager,highland_training.group_training_employee"/>
 
-    <menuitem id="menu_assessment_group" name="Kiểm tra &amp; Đánh giá" parent="menu_training_root" sequence="30" groups="group_training_admin,group_training_manager,group_training_employee"/>
+    <menuitem id="menu_admin_exam" name="Kết quả thi" parent="menu_assessment_group" action="action_training_exam" sequence="10" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_admin_exam" name="Kết quả thi" parent="menu_assessment_group" action="action_training_exam" sequence="10" groups="group_training_admin"/>
+    <menuitem id="menu_admin_practice" name="Đánh giá thực hành" parent="menu_assessment_group" action="action_manager_practice_assessment" sequence="30" groups="highland_training.group_training_admin,highland_training.group_training_manager"/>
 
-    <menuitem id="menu_admin_practice" name="Đánh giá thực hành" parent="menu_assessment_group" action="action_manager_practice_assessment" sequence="30" groups="group_training_admin,group_training_manager"/>
+    <menuitem id="menu_certificates_group" name="Chứng nhận" parent="menu_training_root" sequence="40" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_certificates_group" name="Chứng nhận" parent="menu_training_root" sequence="40" groups="group_training_admin"/>
+    <menuitem id="menu_training_certificate" name="Quản lý chứng nhận" parent="menu_certificates_group" action="action_training_certificate" sequence="10" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_training_certificate" name="Quản lý chứng nhận" parent="menu_certificates_group" action="action_training_certificate" sequence="10" groups="group_training_admin"/>
+    <menuitem id="menu_employee_my_certificates" name="Chứng nhận của tôi" parent="menu_certificates_group" action="action_my_certificates" sequence="20" groups="highland_training.group_training_employee"/>
 
-    <menuitem id="menu_employee_my_certificates" name="Chứng nhận của tôi" parent="menu_certificates_group" action="action_my_certificates" sequence="20" groups="group_training_employee"/>
+    <menuitem id="menu_reports_group" name="Báo cáo" parent="menu_training_root" sequence="50" groups="highland_training.group_training_admin,highland_training.group_training_manager"/>
 
-    <menuitem id="menu_reports_group" name="Báo cáo" parent="menu_training_root" sequence="50" groups="group_training_admin,group_training_manager"/>
+    <menuitem id="menu_training_report" name="Báo cáo tổng hợp" parent="menu_reports_group" action="action_training_report" sequence="10" groups="highland_training.group_training_admin"/>
 
-    <menuitem id="menu_training_report" name="Báo cáo tổng hợp" parent="menu_reports_group" action="action_training_report" sequence="10" groups="group_training_admin"/>
+    <menuitem id="menu_employee_portal" name="Nhân viên" parent="menu_training_root" sequence="60" groups="highland_training.group_training_employee"/>
 
-    <menuitem id="menu_employee_portal" name="Nhân viên" parent="menu_training_root" sequence="60" groups="group_training_employee"/>
+    <menuitem id="menu_employee_my_enrollments" name="Khóa học của tôi" parent="menu_employee_portal" action="action_my_enrollments" sequence="10" groups="highland_training.group_training_employee"/>
 
-    <menuitem id="menu_employee_my_enrollments" name="Khóa học của tôi" parent="menu_employee_portal" action="action_my_enrollments" sequence="10" groups="group_training_employee"/>
+    <menuitem id="menu_employee_my_exams" name="Bài thi" parent="menu_employee_portal" action="action_my_exams" sequence="20" groups="highland_training.group_training_employee"/>
 
-    <menuitem id="menu_employee_my_exams" name="Bài thi" parent="menu_employee_portal" action="action_my_exams" sequence="20" groups="group_training_employee"/>
-
-    <menuitem id="menu_employee_my_certificates" name="Chứng nhận của tôi" parent="menu_employee_portal" action="action_my_certificates" sequence="30" groups="group_training_employee"/>
+    <menuitem id="menu_employee_my_certificates" name="Chứng nhận của tôi" parent="menu_employee_portal" action="action_my_certificates" sequence="30" groups="highland_training.group_training_employee"/>
 
 </odoo>

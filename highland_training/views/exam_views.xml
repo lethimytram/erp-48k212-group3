@@ -47,7 +47,7 @@
                             <field name="start_time" readonly="1"/>
                             <field name="end_time" readonly="1"/>
                             <field name="duration" widget="float_time" readonly="1"/>
-                            <field name="score" widget="percentpie" readonly="1"/>
+                            <field name="score" widget="float" readonly="1"/>
                             <field name="is_passed" widget="boolean_toggle" readonly="1"/>
                         </group>
                     </group>

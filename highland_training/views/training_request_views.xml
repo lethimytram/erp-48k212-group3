@@ -58,7 +58,7 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <!-- Manager Action: My Training Requests -->
+    <!-- Cửa hàng trưởng: Yêu cầu đào tạo của tôi -->
     <record id="action_my_training_requests" model="ir.actions.act_window">
         <field name="name">Yêu cầu đào tạo của tôi</field>
         <field name="res_model">training.request</field>

@@ -46,7 +46,7 @@
                         <group>
                             <field name="assessor_id" readonly="1"/>
                             <field name="assessment_date"/>
-                            <field name="score" widget="percentpie"/>
+                            <field name="score" widget="float"/>
                             <field name="is_passed" widget="boolean_toggle" readonly="1"/>
                         </group>
                     </group>

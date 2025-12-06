@@ -57,12 +57,12 @@
                                 <group string="Lý thuyết">
                                     <field name="theory_state"/>
                                     <field name="exam_count"/>
-                                    <field name="best_exam_score" widget="percentpie"/>
+                                    <field name="best_exam_score" widget="float"/>
                                 </group>
                                 <group string="Thực hành">
                                     <field name="practice_state"/>
                                     <field name="practice_count"/>
-                                    <field name="practice_score" widget="percentpie"/>
+                                    <field name="practice_score" widget="float"/>
                                 </group>
                             </group>
                         </page>

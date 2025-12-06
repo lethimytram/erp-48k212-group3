@@ -51,10 +51,10 @@
                     </group>
                     <group string="Kết quả">
                         <group>
-                            <field name="theory_score" widget="percentpie"/>
+                            <field name="theory_score" widget="float"/>
                         </group>
                         <group>
-                            <field name="practice_score" widget="percentpie"/>
+                            <field name="practice_score" widget="float"/>
                         </group>
                     </group>
                     <group>
@@ -92,10 +92,10 @@
                     </group>
                     <group string="Kết quả">
                         <group>
-                            <field name="theory_score" widget="percentpie" readonly="1"/>
+                            <field name="theory_score" widget="float" readonly="1"/>
                         </group>
                         <group>
-                            <field name="practice_score" widget="percentpie" readonly="1"/>
+                            <field name="practice_score" widget="float" readonly="1"/>
                         </group>
                     </group>
                 </sheet>

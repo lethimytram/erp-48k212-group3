@@ -35,7 +35,6 @@
         'views/exam_views.xml',
         'views/certificate_views.xml',
         'views/report_views.xml',
-        'views/plan_enroll_wizard_views.xml',
         
         # Views - Manager
         'views/manager_views.xml',
