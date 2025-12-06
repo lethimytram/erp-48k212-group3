@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Training Content Tree View -->
+    <record id="view_training_content_tree" model="ir.ui.view">
+        <field name="name">training.content.tree</field>
+        <field name="model">training.content</field>
+        <field name="arch" type="xml">
+            <list decoration-primary="content_type == 'video'" decoration-info="content_type == 'document'" decoration-warning="content_type == 'recipe'">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="content_type"/>
+                <field name="duration" widget="integer"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Training Content Form View -->
+    <record id="view_training_content_form" model="ir.ui.view">
+        <field name="name">training.content.form</field>
+        <field name="model">training.content</field>
+        <field name="arch" type="xml">
+            <form string="Nội dung đào tạo">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="content_type"/>
+                        </group>
+                        <group>
+                            <field name="duration"/>
+                        </group>
+                    </group>
+
+                    <!-- Upload File Section -->
+                    <group string="Tài liệu &amp; File" name="files">
+                        <field name="attachment_ids" widget="many2many_binary" string="Upload File"/>
+                    </group>
+
+                    <!-- Video URL -->
+                    <group string="Video" name="video" invisible="content_type != 'video'">
+                        <field name="video_url"/>
+                    </group>
+
+                    <!-- Description -->
+                    <group string="Mô tả" name="description">
+                        <field name="description" widget="html" nolabel="1"/>
+                    </group>
+
+                    <!-- Recipe Fields -->
+                    <group string="Công thức" name="recipe" invisible="content_type != 'recipe'">
+                        <group>
+                            <field name="recipe_ingredients"/>
+                        </group>
+                        <group>
+                            <field name="recipe_steps" widget="html"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

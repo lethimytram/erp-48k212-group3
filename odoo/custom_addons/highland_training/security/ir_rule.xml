@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="rule_training_request_admin" model="ir.rule">
+        <field name="name">Training Request - Admin (All)</field>
+        <field name="model_id" ref="model_training_request"/>
+        <field name="groups" eval="[(4, ref('group_training_admin'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_delete">1</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Manager: Xem yêu cầu của cửa hàng mình -->
+    <record id="rule_training_request_manager" model="ir.rule">
+        <field name="name">Training Request - Manager (Own store)</field>
+        <field name="model_id" ref="model_training_request"/>
+        <field name="groups" eval="[(4, ref('group_training_manager'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="domain_force">[('store_id.manager_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Employee: Xem yêu cầu của chính mình -->
+    <record id="rule_training_request_employee" model="ir.rule">
+        <field name="name">Training Request - Employee (Own request)</field>
+        <field name="model_id" ref="model_training_request"/>
+        <field name="groups" eval="[(4, ref('group_training_employee'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="perm_create">1</field>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+    </record>
+
+
+    <record id="rule_training_plan_admin" model="ir.rule">
+        <field name="name">Training Plan - Admin (All)</field>
+        <field name="model_id" ref="model_training_plan"/>
+        <field name="groups" eval="[(4, ref('group_training_admin'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_delete">1</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Manager: Xem kế hoạch của cửa hàng mình -->
+    <record id="rule_training_plan_manager" model="ir.rule">
+        <field name="name">Training Plan - Manager (Own store)</field>
+        <field name="model_id" ref="model_training_plan"/>
+        <field name="groups" eval="[(4, ref('group_training_manager'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="domain_force">[('store_id.manager_id', '=', user.id)]</field>
+    </record>
+
+
+    <record id="rule_training_enrollment_admin" model="ir.rule">
+        <field name="name">Training Enrollment - Admin (All)</field>
+        <field name="model_id" ref="model_training_enrollment"/>
+        <field name="groups" eval="[(4, ref('group_training_admin'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_delete">1</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Manager: Xem ghi danh của nhân viên cửa hàng mình -->
+    <record id="rule_training_enrollment_manager" model="ir.rule">
+        <field name="name">Training Enrollment - Manager (Own store employees)</field>
+        <field name="model_id" ref="model_training_enrollment"/>
+        <field name="groups" eval="[(4, ref('group_training_manager'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="domain_force">[('employee_id.store_id.manager_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Employee: Xem ghi danh của chính mình -->
+    <record id="rule_training_enrollment_employee" model="ir.rule">
+        <field name="name">Training Enrollment - Employee (Own enrollment)</field>
+        <field name="model_id" ref="model_training_enrollment"/>
+        <field name="groups" eval="[(4, ref('group_training_employee'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+    </record>
+
+    <record id="rule_training_exam_admin" model="ir.rule">
+        <field name="name">Training Exam - Admin (All)</field>
+        <field name="model_id" ref="model_training_exam"/>
+        <field name="groups" eval="[(4, ref('group_training_admin'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_delete">1</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Manager: Xem kết quả thi của nhân viên cửa hàng mình -->
+    <record id="rule_training_exam_manager" model="ir.rule">
+        <field name="name">Training Exam - Manager (Own store employees)</field>
+        <field name="model_id" ref="model_training_exam"/>
+        <field name="groups" eval="[(4, ref('group_training_manager'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="domain_force">[('employee_id.store_id.manager_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Employee: Xem kết quả thi của chính mình -->
+    <record id="rule_training_exam_employee" model="ir.rule">
+        <field name="name">Training Exam - Employee (Own exam)</field>
+        <field name="model_id" ref="model_training_exam"/>
+        <field name="groups" eval="[(4, ref('group_training_employee'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Admin: Xem tất cả đánh giá thực hành -->
+    <record id="rule_practice_assessment_admin" model="ir.rule">
+        <field name="name">Practice Assessment - Admin (All)</field>
+        <field name="model_id" ref="model_practice_assessment"/>
+        <field name="groups" eval="[(4, ref('group_training_admin'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_delete">1</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Manager: Xem và chấm đánh giá của nhân viên cửa hàng mình -->
+    <record id="rule_practice_assessment_manager" model="ir.rule">
+        <field name="name">Practice Assessment - Manager (Own store employees)</field>
+        <field name="model_id" ref="model_practice_assessment"/>
+        <field name="groups" eval="[(4, ref('group_training_manager'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="domain_force">[('employee_id.store_id.manager_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Employee: Xem đánh giá của chính mình (read-only) -->
+    <record id="rule_practice_assessment_employee" model="ir.rule">
+        <field name="name">Practice Assessment - Employee (Own assessment)</field>
+        <field name="model_id" ref="model_practice_assessment"/>
+        <field name="groups" eval="[(4, ref('group_training_employee'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Admin: Xem tất cả chứng nhận -->
+    <record id="rule_training_certificate_admin" model="ir.rule">
+        <field name="name">Training Certificate - Admin (All)</field>
+        <field name="model_id" ref="model_training_certificate"/>
+        <field name="groups" eval="[(4, ref('group_training_admin'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_delete">1</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Manager: Xem chứng nhận của nhân viên cửa hàng mình -->
+    <record id="rule_training_certificate_manager" model="ir.rule">
+        <field name="name">Training Certificate - Manager (Own store employees)</field>
+        <field name="model_id" ref="model_training_certificate"/>
+        <field name="groups" eval="[(4, ref('group_training_manager'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="domain_force">[('employee_id.store_id.manager_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Employee: Xem chứng nhận của chính mình -->
+    <record id="rule_training_certificate_employee" model="ir.rule">
+        <field name="name">Training Certificate - Employee (Own certificate)</field>
+        <field name="model_id" ref="model_training_certificate"/>
+        <field name="groups" eval="[(4, ref('group_training_employee'))]"/>
+        <field name="perm_read">1</field>
+        <field name="perm_write">0</field>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+    </record>
+
+</odoo>

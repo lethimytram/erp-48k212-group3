@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequence for Enrollment -->
+    <record id="seq_training_enrollment" model="ir.sequence">
+        <field name="name">Training Enrollment</field>
+        <field name="code">training.enrollment</field>
+        <field name="prefix">ENR/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Sequence for Training Request -->
+    <record id="seq_training_request" model="ir.sequence">
+        <field name="name">Training Request</field>
+        <field name="code">training.request</field>
+        <field name="prefix">REQ/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Sequence for Exam -->
+    <record id="seq_training_exam" model="ir.sequence">
+        <field name="name">Training Exam</field>
+        <field name="code">training.exam</field>
+        <field name="prefix">EX/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Sequence for Practice -->
+    <record id="seq_training_practice" model="ir.sequence">
+        <field name="name">Training Practice</field>
+        <field name="code">training.practice</field>
+        <field name="prefix">PRC/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Sequence for Certificate -->
+    <record id="seq_training_certificate" model="ir.sequence">
+        <field name="name">Training Certificate</field>
+        <field name="code">training.certificate</field>
+        <field name="prefix">CERT/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Training Request Tree View -->
+    <record id="view_training_request_tree" model="ir.ui.view">
+        <field name="name">training.request.tree</field>
+        <field name="model">training.request</field>
+        <field name="arch" type="xml">
+            <list string="Nhu cầu đào tạo">
+                <field name="name"/>
+                <field name="store_manager_id"/>
+                <field name="course_ids" widget="many2many_tags"/>
+                <field name="state" decoration-info="state=='draft'" decoration-success="state=='approved'" decoration-danger="state=='rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Training Request Form View -->
+    <record id="view_training_request_form" model="ir.ui.view">
+        <field name="name">training.request.form</field>
+        <field name="model">training.request</field>
+        <field name="arch" type="xml">
+            <form string="Nhu cầu đào tạo">
+                <header>
+                    <button name="action_submit" string="Gửi yêu cầu" type="object" invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_approve" string="Phê duyệt" type="object" invisible="state != 'submitted'" class="btn-success" groups="highland_training.group_training_admin"/>
+                    <button name="action_reject" string="Từ chối" type="object" invisible="state != 'submitted'" groups="highland_training.group_training_admin"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="store_manager_id" readonly="state != 'draft'"/>
+                            <field name="course_selection_type" widget="radio" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="state" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="course_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                    </group>
+                    <group invisible="course_selection_type != 'existing'">
+                        <field name="employee_ids" widget="many2many_tags" readonly="state != 'draft'" required="course_selection_type == 'existing'"/>
+                    </group>
+                    <group>
+                        <field name="reason" readonly="state != 'draft'"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Training Request Action -->
+    <record id="action_training_request" model="ir.actions.act_window">
+        <field name="name">Nhu cầu đào tạo</field>
+        <field name="res_model">training.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Cửa hàng trưởng: Yêu cầu đào tạo của tôi -->
+    <record id="action_my_training_requests" model="ir.actions.act_window">
+        <field name="name">Yêu cầu đào tạo của tôi</field>
+        <field name="res_model">training.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('store_manager_id.user_id', '=', uid)]</field>
+    </record>
+
+</odoo>

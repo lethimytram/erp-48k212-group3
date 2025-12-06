@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Course Tree View -->
+    <record id="view_training_course_tree" model="ir.ui.view">
+        <field name="name">training.course.tree</field>
+        <field name="model">training.course</field>
+        <field name="arch" type="xml">
+            <list string="Khóa học" sample="1">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="course_type"/>
+                <field name="content_count"/>
+                <field name="question_count"/>
+                <field name="checklist_count"/>
+                <field name="enrollment_count"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'need_planning'" decoration-success="state == 'active'" decoration-muted="state == 'archived'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Course Form View -->
+    <record id="view_training_course_form" model="ir.ui.view">
+        <field name="name">training.course.form</field>
+        <field name="model">training.course</field>
+        <field name="arch" type="xml">
+            <form string="Khóa học">
+                <header>
+                    <button name="action_activate" string="Kích hoạt" type="object" invisible="state == 'active'" class="oe_highlight"/>
+                    <button name="action_archive_course" string="Lưu trữ" type="object" invisible="state == 'archived'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,need_planning,active"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Lưu trữ" bg_color="text-bg-danger" invisible="state != 'archived'"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Tên khóa học"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="course_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="job_position_ids" widget="many2many_tags"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Nội dung đào tạo" name="content">
+                            <field name="content_ids">
+                                <form string="Nội dung">
+                                    <sheet>
+                                        <group>
+                                            <group>
+                                                <field name="name"/>
+                                                <field name="content_type"/>
+                                            </group>
+                                            <group>
+                                                <field name="duration"/>
+                                            </group>
+                                        </group>
+
+                                        <!-- Upload Files -->
+                                        <group string="TÀI LIỆU &amp; FILE">
+                                            <field name="attachment_ids" widget="many2many_binary" string="Upload File"/>
+                                        </group>
+
+                                        <!-- Video URL -->
+                                        <group string="VIDEO" invisible="content_type != 'video'">
+                                            <field name="video_url" placeholder="https://youtube.com/watch?v=..."/>
+                                        </group>
+
+                                        <!-- Recipe Fields -->
+                                        <group string="CÔNG THỨC PHA CHẾ" invisible="content_type != 'recipe'">
+                                            <field name="recipe_ingredients" placeholder="Ví dụ:&#10;- Espresso: 30ml&#10;- Sữa: 200ml&#10;- Đường: 10g"/>
+                                            <field name="recipe_steps" widget="html" placeholder="Các bước thực hiện..."/>
+                                        </group>
+
+                                        <!-- Description -->
+                                        <group string="MÔ TẢ">
+                                            <field name="description" widget="html" placeholder="Mô tả nội dung..." nolabel="1"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="content_type"/>
+                                    <field name="duration"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ngân hàng câu hỏi" name="questions">
+                            <field name="question_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="question_type"/>
+                                    <field name="points"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Checklist thực hành" name="checklist">
+                            <field name="checklist_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="category"/>
+                                    <field name="is_required"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Nhân viên cần học" name="employees">
+                            <field name="employee_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="department_id"/>
+                                    <field name="job_id"/>
+                                    <field name="work_email"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Cấu hình đánh giá" name="config">
+                            <group>
+                                <group string="Lý thuyết">
+                                    <field name="exam_question_count"/>
+                                    <field name="exam_duration"/>
+                                    <field name="exam_pass_score"/>
+                                </group>
+                                <group string="Thực hành">
+                                    <field name="practice_pass_percent"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Mô tả" name="description">
+                            <field name="description" widget="html"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Course Search View -->
+    <record id="view_training_course_search" model="ir.ui.view">
+        <field name="name">training.course.search</field>
+        <field name="model">training.course</field>
+        <field name="arch" type="xml">
+            <search string="Tìm kiếm khóa học">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="course_type"/>
+                <field name="job_position_ids"/>
+                <filter string="Nháp" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Cần lập kế hoạch" name="need_planning" domain="[('state', '=', 'need_planning')]"/>
+                <filter string="Đang hoạt động" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Lưu trữ" name="archived" domain="[('state', '=', 'archived')]"/>
+                <group expand="0" string="Nhóm theo">
+                    <filter string="Loại khóa học" name="group_type" context="{'group_by': 'course_type'}"/>
+                    <filter string="Trạng thái" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Course Action -->
+    <record id="action_training_course" model="ir.actions.act_window">
+        <field name="name">Khóa học</field>
+        <field name="res_model">training.course</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo khóa học đào tạo mới
+            </p>
+            <p>
+                Khởi tạo khóa học với nội dung, câu hỏi thi và checklist thực hành.
+            </p>
+        </field>
+    </record>
+
+</odoo>

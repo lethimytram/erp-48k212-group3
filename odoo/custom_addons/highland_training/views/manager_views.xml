@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Manager Dashboard - Practice Assessment View -->
+    <record id="view_training_practice_manager_tree" model="ir.ui.view">
+        <field name="name">training.practice.manager.tree</field>
+        <field name="model">training.practice</field>
+        <field name="arch" type="xml">
+            <list string="Đánh giá thực hành" create="1" sample="1">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="course_id"/>
+                <field name="assessment_date"/>
+                <field name="score" widget="progressbar"/>
+                <field name="is_passed" widget="boolean_toggle"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'in_progress'" decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Manager Practice Assessment Form -->
+    <record id="view_training_practice_manager_form" model="ir.ui.view">
+        <field name="name">training.practice.manager.form</field>
+        <field name="model">training.practice</field>
+        <field name="arch" type="xml">
+            <form string="Đánh giá thực hành">
+                <header>
+                    <button name="action_start" string="Bắt đầu đánh giá" type="object" invisible="state != 'draft'" class="oe_highlight"/>
+                    <button name="action_submit" string="Hoàn thành" type="object" invisible="state != 'in_progress'" class="oe_highlight"/>
+                    <button name="action_cancel" string="Hủy" type="object" invisible="state in ['done', 'cancelled']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,done"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Đạt" bg_color="text-bg-success" invisible="not is_passed or state != 'done'"/>
+                    <widget name="web_ribbon" title="Chưa đạt" bg_color="text-bg-danger" invisible="is_passed or state != 'done'"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="course_id" readonly="1"/>
+                            <field name="enrollment_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="assessor_id" readonly="1"/>
+                            <field name="assessment_date"/>
+                            <field name="score" widget="float"/>
+                            <field name="is_passed" widget="boolean_toggle" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Checklist đánh giá" name="checklist">
+                            <field name="line_ids">
+                                <list editable="bottom" decoration-success="is_passed == True" decoration-danger="is_passed == False">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="checklist_id" readonly="1"/>
+                                    <field name="category" readonly="1"/>
+                                    <field name="is_required" widget="boolean_toggle" readonly="1"/>
+                                    <field name="is_passed" widget="boolean_toggle"/>
+                                    <field name="assessor_notes" placeholder="Ghi chú..."/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Nhận xét chung" name="notes">
+                            <field name="notes" placeholder="Nhận xét tổng quan về kỹ năng thực hành của nhân viên..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Manager Actions -->
+    <record id="action_manager_practice_assessment" model="ir.actions.act_window">
+        <field name="name">Đánh giá thực hành</field>
+        <field name="res_model">training.practice</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('assessor_id.user_id', '=', uid)]</field>
+        <field name="context">{'default_assessor_id': 'self.env.user.employee_id'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Hiện tại chưa có nhân viên nào đạt lý thuyết
+            </p>
+            <p>
+                Khi nhân viên đạt bài thi lý thuyết, bạn sẽ có thể đánh giá thực hành của họ.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_manager_my_store_enrollments" model="ir.actions.act_window">
+        <field name="name">Nhân viên của tôi</field>
+        <field name="res_model">training.enrollment</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('manager_id', '=', uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có nhân viên nào đăng ký học
+            </p>
+        </field>
+    </record>
+
+</odoo>
